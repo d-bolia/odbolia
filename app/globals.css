@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+}
+
+@theme inline {
+  --font-sans: var(--font-mono);
+  --font-mono: var(--font-mono);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background: #0a0a0a;
+  color: #ededed;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Geist Mono as the single typeface for the entire site */
+  font-family: var(--font-mono), monospace;
+  font-weight: 300;
+  font-size: 16px;
+}
+
+/* Headings: bold weight, all-caps, wide tracking — rounded by Geist's letterforms */
+h1, h2 {
+  font-family: var(--font-mono), monospace;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+/* Subheadings: light weight, sentence case, moderate tracking */
+h3, h4, h5, h6 {
+  font-family: var(--font-mono), monospace;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+p, li, a, span, label, button, input, textarea {
+  font-family: var(--font-mono), monospace;
+  font-weight: 300;
+}
