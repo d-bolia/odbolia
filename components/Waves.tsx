@@ -20,6 +20,8 @@ interface WavesProps {
   strokeColor?: string
   backgroundColor?: string
   pointerSize?: number
+  /** If provided, strands are colored by a gradient mapped to absolute page position */
+  gradientColors?: string[]
 }
 
 export function Waves({
@@ -27,6 +29,7 @@ export function Waves({
   strokeColor = "#ffffff",
   backgroundColor = "#000000",
   pointerSize = 0.5,
+  gradientColors,
 }: WavesProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -47,11 +50,15 @@ export function Waves({
   const noiseRef = useRef<((x: number, y: number) => number) | null>(null)
   const rafRef = useRef<number | null>(null)
   const boundingRef = useRef<DOMRect | null>(null)
+  const gradientRef = useRef<SVGLinearGradientElement | null>(null)
+
+  const usingGradient = !!gradientColors?.length
 
   useEffect(() => {
     if (!containerRef.current || !svgRef.current) return
     noiseRef.current = createNoise2D()
     setSize()
+    if (usingGradient) createGradient()
     setLines()
     window.addEventListener("resize", onResize)
     window.addEventListener("mousemove", onMouseMove)
@@ -65,12 +72,14 @@ export function Waves({
       window.removeEventListener("mousemove", onMouseMove)
       containerRef.current?.removeEventListener("touchmove", onTouchMove)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Re-paint paths when strokeColor changes
+  // Re-paint paths when strokeColor changes (solid-color mode only)
   useEffect(() => {
+    if (usingGradient) return
     pathsRef.current.forEach((path) => path.setAttribute("stroke", strokeColor))
-  }, [strokeColor])
+  }, [strokeColor, usingGradient])
 
   const setSize = () => {
     if (!containerRef.current || !svgRef.current) return
@@ -78,6 +87,39 @@ export function Waves({
     const { width, height } = boundingRef.current
     svgRef.current.style.width = `${width}px`
     svgRef.current.style.height = `${height}px`
+  }
+
+  // Build (or rebuild) the SVG linearGradient in <defs>
+  const createGradient = () => {
+    if (!svgRef.current || !gradientColors?.length) return
+
+    let defs = svgRef.current.querySelector("defs")
+    if (!defs) {
+      defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
+      svgRef.current.insertBefore(defs, svgRef.current.firstChild)
+    }
+
+    const existing = defs.querySelector("#wave-gradient")
+    if (existing) existing.remove()
+
+    const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
+    grad.setAttribute("id", "wave-gradient")
+    grad.setAttribute("gradientUnits", "userSpaceOnUse")
+    grad.setAttribute("x1", "0")
+    grad.setAttribute("x2", "0")
+    // y1/y2 are updated every frame in tick()
+    grad.setAttribute("y1", "0")
+    grad.setAttribute("y2", String(window.innerHeight))
+
+    gradientColors.forEach((color, i) => {
+      const stop = document.createElementNS("http://www.w3.org/2000/svg", "stop")
+      stop.setAttribute("offset", `${(i / (gradientColors.length - 1)) * 100}%`)
+      stop.setAttribute("stop-color", color)
+      grad.appendChild(stop)
+    })
+
+    defs.appendChild(grad)
+    gradientRef.current = grad
   }
 
   const setLines = () => {
@@ -94,6 +136,7 @@ export function Waves({
     const totalPoints = Math.ceil(oHeight / yGap)
     const xStart = (width - xGap * totalLines) / 2
     const yStart = (height - yGap * totalPoints) / 2
+    const strokeVal = usingGradient ? "url(#wave-gradient)" : strokeColor
     for (let i = 0; i < totalLines; i++) {
       const points: Point[] = []
       for (let j = 0; j < totalPoints; j++) {
@@ -104,12 +147,9 @@ export function Waves({
           cursor: { x: 0, y: 0, vx: 0, vy: 0 },
         })
       }
-      const path = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path"
-      )
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path")
       path.setAttribute("fill", "none")
-      path.setAttribute("stroke", strokeColor)
+      path.setAttribute("stroke", strokeVal)
       path.setAttribute("stroke-width", "1")
       svgRef.current.appendChild(path)
       pathsRef.current.push(path)
@@ -119,6 +159,7 @@ export function Waves({
 
   const onResize = () => {
     setSize()
+    if (usingGradient) createGradient()
     setLines()
   }
   const onMouseMove = (e: MouseEvent) =>
@@ -225,6 +266,15 @@ export function Waves({
       containerRef.current.style.setProperty("--x", `${mouse.sx}px`)
       containerRef.current.style.setProperty("--y", `${mouse.sy}px`)
     }
+
+    // Shift gradient y1/y2 to stay anchored to absolute page coordinates
+    if (gradientRef.current) {
+      const scrollY = window.scrollY
+      const totalH = document.documentElement.scrollHeight
+      gradientRef.current.setAttribute("y1", String(-scrollY))
+      gradientRef.current.setAttribute("y2", String(totalH - scrollY))
+    }
+
     movePoints(time)
     drawLines()
     rafRef.current = requestAnimationFrame(tick)
@@ -261,7 +311,7 @@ export function Waves({
           left: 0,
           width: `${pointerSize}rem`,
           height: `${pointerSize}rem`,
-          background: strokeColor,
+          background: usingGradient ? "transparent" : strokeColor,
           borderRadius: "50%",
           transform:
             "translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0)",
