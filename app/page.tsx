@@ -18,16 +18,16 @@ import { Waves } from "@/components/Waves"
 type BranchId = "about" | "drone" | "vlsi" | "adder" | "otft" | null
 type LoopPhase = "idle" | "covering" | "uncovering"
 
-const SECTION_COLORS: Record<string, string> = {
-  about:     "#6B21A8",
-  portfolio: "#06B6D4",
-  contact:   "#EC4899",
-}
+const WAVE_GRADIENT = [
+  { color: "#15803D", offset: 0    },
+  { color: "#06B6D4", offset: 0.25 },
+  { color: "#6B21A8", offset: 0.5  },
+  { color: "#EC4899", offset: 1    },
+]
 
 export default function Home() {
   const [pastHero,     setPastHero]     = useState(false)
   const [activeBranch, setActiveBranch] = useState<BranchId>(null)
-  const [waveColor,    setWaveColor]    = useState("#6B21A8")
   const [loopPhase,    setLoopPhase]    = useState<LoopPhase>("idle")
 
   const heroRef      = useRef<HTMLDivElement>(null)
@@ -47,26 +47,6 @@ export default function Home() {
     )
     obs.observe(el)
     return () => obs.disconnect()
-  }, [])
-
-  // ── Section color tracking ────────────────────────────────────────────────
-  useEffect(() => {
-    const pairs: [React.RefObject<HTMLElement | null>, string][] = [
-      [aboutRef,     SECTION_COLORS.about],
-      [portfolioRef, SECTION_COLORS.portfolio],
-      [contactRef,   SECTION_COLORS.contact],
-    ]
-
-    const observers = pairs.map(([ref, color]) => {
-      const obs = new IntersectionObserver(
-        ([e]) => { if (e.isIntersecting) setWaveColor(color) },
-        { threshold: 0.35 }
-      )
-      if (ref.current) obs.observe(ref.current)
-      return obs
-    })
-
-    return () => observers.forEach((o) => o.disconnect())
   }, [])
 
   // ── Infinite carousel sentinel ────────────────────────────────────────────
@@ -137,7 +117,7 @@ export default function Home() {
         }}
       >
         <Waves
-          strokeColor={waveColor}
+          gradientColors={WAVE_GRADIENT}
           backgroundColor="transparent"
           pointerSize={0}
         />

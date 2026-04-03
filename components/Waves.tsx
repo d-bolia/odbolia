@@ -15,13 +15,16 @@ interface Point {
   }
 }
 
+type GradientStop = string | { color: string; offset: number }
+
 interface WavesProps {
   className?: string
   strokeColor?: string
   backgroundColor?: string
   pointerSize?: number
-  /** If provided, strands are colored by a gradient mapped to absolute page position */
-  gradientColors?: string[]
+  /** Gradient stops mapped to absolute page position (top→bottom).
+   *  Each entry is either a hex string (evenly spaced) or { color, offset } (0–1). */
+  gradientColors?: GradientStop[]
 }
 
 export function Waves({
@@ -111,9 +114,13 @@ export function Waves({
     grad.setAttribute("y1", "0")
     grad.setAttribute("y2", String(window.innerHeight))
 
-    gradientColors.forEach((color, i) => {
+    gradientColors.forEach((entry, i) => {
       const stop = document.createElementNS("http://www.w3.org/2000/svg", "stop")
-      stop.setAttribute("offset", `${(i / (gradientColors.length - 1)) * 100}%`)
+      const color  = typeof entry === "string" ? entry : entry.color
+      const offset = typeof entry === "string"
+        ? i / (gradientColors.length - 1)
+        : entry.offset
+      stop.setAttribute("offset", `${(offset * 100).toFixed(2)}%`)
       stop.setAttribute("stop-color", color)
       grad.appendChild(stop)
     })
