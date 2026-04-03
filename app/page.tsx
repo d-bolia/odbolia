@@ -114,6 +114,7 @@ export default function Home() {
       <AboutSection
         sectionRef={aboutRef}
         onOpenBranch={() => setActiveBranch("about")}
+        branchOpen={activeBranch === "about"}
       />
       <PortfolioSection
         sectionRef={portfolioRef}

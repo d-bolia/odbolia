@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { BGPattern } from "./BGPattern"
 
@@ -12,12 +12,37 @@ const MONO: React.CSSProperties = {
 interface AboutSectionProps {
   onOpenBranch: () => void
   sectionRef: React.RefObject<HTMLElement | null>
+  branchOpen?: boolean
 }
 
-export default function AboutSection({ onOpenBranch, sectionRef }: AboutSectionProps) {
+export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: AboutSectionProps) {
   const [input, setInput] = useState("")
   const [submitted, setSubmitted] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Reset when the branch is closed (user clicks return)
+  useEffect(() => {
+    if (!branchOpen && submitted) {
+      setSubmitted(false)
+      setInput("")
+    }
+  }, [branchOpen]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Global keydown: pressing y anywhere fires the prompt immediately
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if (submitted || branchOpen) return
+      const tag = (e.target as HTMLElement).tagName
+      if (tag === "INPUT" || tag === "TEXTAREA") return
+      if (e.key === "y" || e.key === "Y") {
+        setInput("y")
+        setSubmitted(true)
+        onOpenBranch()
+      }
+    }
+    window.addEventListener("keydown", handleGlobalKey)
+    return () => window.removeEventListener("keydown", handleGlobalKey)
+  }, [submitted, branchOpen, onOpenBranch])
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
