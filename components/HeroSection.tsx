@@ -1,5 +1,7 @@
 "use client"
 
+import { useRef, useEffect, useLayoutEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import { Canvas } from "@react-three/fiber"
 import { motion } from "framer-motion"
 import SunSphere from "./SunSphere"
@@ -32,107 +34,208 @@ const MONO: React.CSSProperties = {
 }
 
 // ---------------------------------------------------------------------------
+// Scroll-transition constants (mirror page.tsx MiniSphere geometry)
+// ---------------------------------------------------------------------------
+
+const MINI_SIZE   = 52    // px — matches MiniSphere width/height
+const MINI_TOP    = 16    // px — matches MiniSphere top
+const MINI_LEFT   = 16    // px — matches MiniSphere left
+const SCROLL_ZONE = 0.85  // progress reaches 1.0 at scrollY = 85% of vh
+
+function applyScrollTransform(container: HTMLDivElement, vw: number, vh: number) {
+  const progress = Math.min(1, Math.max(0, window.scrollY / (vh * SCROLL_ZONE)))
+
+  // Scale: contracts from 1 (full screen) down to ~52px equivalent
+  const sFinal = MINI_SIZE / (0.4436 * vh)
+  const s      = 1 - progress * (1 - sFinal)
+
+  // Translate: moves sphere center from (vw/2, vh/2) to (MINI_LEFT+26, MINI_TOP+26)
+  // transform-origin is top-left, so after scale the center is at (vw*s/2, vh*s/2)
+  const targetCX = MINI_LEFT + MINI_SIZE / 2  // 42
+  const targetCY = MINI_TOP  + MINI_SIZE / 2  // 42
+  const tx = progress * (targetCX - (vw / 2) * sFinal)
+  const ty = progress * (targetCY - (vh / 2) * sFinal)
+
+  const opacity = progress >= 0.9 ? Math.max(0, 1 - (progress - 0.9) / 0.1) : 1
+
+  container.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`
+  container.style.opacity   = String(opacity)
+}
+
+// ---------------------------------------------------------------------------
 // Hero
 // ---------------------------------------------------------------------------
 
 export default function HeroSection() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const vwRef        = useRef(0)
+  const vhRef        = useRef(0)
+  const rafRef       = useRef<number | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Set initial transform synchronously before first paint
+  useLayoutEffect(() => {
+    vwRef.current = window.innerWidth
+    vhRef.current = window.innerHeight
+    if (containerRef.current) {
+      applyScrollTransform(containerRef.current, vwRef.current, vhRef.current)
+    }
+  }, [mounted])
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    vwRef.current = window.innerWidth
+    vhRef.current = window.innerHeight
+
+    function tick() {
+      applyScrollTransform(container!, vwRef.current, vhRef.current)
+    }
+    function onScroll() {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    function onResize() {
+      vwRef.current = window.innerWidth
+      vhRef.current = window.innerHeight
+      tick()
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onResize)
+    tick() // apply immediately
+
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onResize)
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [mounted])
+
+  // Portal: canvas rendered directly into document.body, escaping <main>'s
+  // stacking context so no ancestor transform can hijack position: fixed
+  const portalCanvas = mounted
+    ? createPortal(
+        <div
+          ref={containerRef}
+          style={{
+            position:        "fixed",
+            top:             0,
+            left:            0,
+            width:           "100vw",
+            height:          "100vh",
+            zIndex:          110,
+            pointerEvents:   "none",
+            transformOrigin: "top left",
+            willChange:      "transform",
+          }}
+        >
+          <Canvas
+            camera={{ position: [0, 0, 6.5], fov: 55 }}
+            gl={{ antialias: true, alpha: true }}
+            dpr={[1, 2]}
+            style={{ pointerEvents: "none" }}
+          >
+            <SunSphere />
+          </Canvas>
+        </div>,
+        document.body
+      )
+    : null
+
   return (
-    <main
-      style={{
-        position: "relative",
-        width: "100vw",
-        height: "100dvh",
-        background: "#0a0a0a",
-        overflow: "hidden",
-      }}
-    >
-      {/* ---- Full-screen canvas so pointer tracks over the entire page ---- */}
-      <div style={{ position: "absolute", inset: 0 }}>
-        <Canvas
-          camera={{ position: [0, 0, 6.5], fov: 55 }}
-          gl={{ antialias: true, alpha: true }}
-          dpr={[1, 2]}
-          style={{ background: "#0a0a0a" }}
-        >
-          <SunSphere />
-        </Canvas>
-      </div>
+    <>
+      {portalCanvas}
 
-      {/* ---- Top-right nav ---- */}
-      <motion.nav
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+      {/* Scroll-space placeholder + hero text/nav */}
+      <main
         style={{
-          position: "absolute",
-          top: 28,
-          right: 32,
-          display: "flex",
-          alignItems: "center",
-          gap: 24,
-          zIndex: 10,
+          position: "relative",
+          width: "100vw",
+          height: "100dvh",
+          background: "#0a0a0a",
+          overflow: "hidden",
         }}
       >
-        <NavLink href="https://github.com/desmondbolia" label="GitHub">
-          <GitHubIcon />
-        </NavLink>
-        <NavLink href="https://linkedin.com/in/desmondbolia" label="LinkedIn">
-          <LinkedInIcon />
-        </NavLink>
-      </motion.nav>
-
-      {/* ---- Name + title — pinned to lower portion ---- */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "11%",
-          left: 0,
-          right: 0,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          zIndex: 10,
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
-      >
-        {/* h1 — heading: semibold (600), all-caps, tight tracking, rounded Geist forms */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.0, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        {/* ---- Top-right nav ---- */}
+        <motion.nav
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           style={{
-            ...MONO,
-            fontWeight: 600,
-            fontSize: "clamp(1.6rem, 4.5vw, 3.8rem)",
-            letterSpacing: "0.14em",
-            lineHeight: 1,
-            color: "#e8e8e8",
-            margin: 0,
-            whiteSpace: "nowrap",
+            position: "absolute",
+            top: 28,
+            right: 32,
+            display: "flex",
+            alignItems: "center",
+            gap: 24,
+            zIndex: 10,
           }}
         >
-          Desmond Bolia
-        </motion.h1>
+          <NavLink href="https://github.com/desmondbolia" label="GitHub">
+            <GitHubIcon />
+          </NavLink>
+          <NavLink href="https://linkedin.com/in/desmondbolia" label="LinkedIn">
+            <LinkedInIcon />
+          </NavLink>
+        </motion.nav>
 
-        {/* subheading — light (300), all-caps, wide tracking */}
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.0, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        {/* ---- Name + title — pinned to lower portion ---- */}
+        <div
           style={{
-            ...MONO,
-            fontWeight: 300,
-            fontSize: "clamp(0.55rem, 1.1vw, 0.78rem)",
-            letterSpacing: "0.42em",
-            color: "rgba(232,232,232,0.35)",
-            marginTop: "1rem",
+            position: "absolute",
+            bottom: "11%",
+            left: 0,
+            right: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            zIndex: 10,
+            pointerEvents: "none",
+            userSelect: "none",
           }}
         >
-          Electrical Engineer
-        </motion.p>
-      </div>
-    </main>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              ...MONO,
+              fontWeight: 600,
+              fontSize: "clamp(1.6rem, 4.5vw, 3.8rem)",
+              letterSpacing: "0.14em",
+              lineHeight: 1,
+              color: "#e8e8e8",
+              margin: 0,
+              whiteSpace: "nowrap",
+            }}
+          >
+            Desmond Bolia
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              ...MONO,
+              fontWeight: 300,
+              fontSize: "clamp(0.55rem, 1.1vw, 0.78rem)",
+              letterSpacing: "0.42em",
+              color: "rgba(232,232,232,0.35)",
+              marginTop: "1rem",
+            }}
+          >
+            Electrical Engineer
+          </motion.p>
+        </div>
+      </main>
+    </>
   )
 }
 
