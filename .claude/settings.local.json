@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm install:*)",
+      "Bash(uipro init:*)",
+      "Bash(git clone:*)",
+      "Bash(cp:*)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(mv /c/Users/desmo/Desktop/odbolia/README.md.bak /tmp/README.md.bak)",
+      "Bash(mv /c/Users/desmo/Desktop/odbolia/CLAUDE.md.bak /tmp/CLAUDE.md.bak)",
+      "Bash(npm run:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(pkill -f \"next dev\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://localhost:3001/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001)",
+      "WebSearch",
+      "WebFetch(domain:fonts.google.com)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3002)",
+      "Bash(kill %1)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
