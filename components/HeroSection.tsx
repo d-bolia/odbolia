@@ -50,7 +50,7 @@ export default function HeroSection() {
       <div style={{ position: "absolute", inset: 0 }}>
         <Canvas
           camera={{ position: [0, 0, 6.5], fov: 55 }}
-          gl={{ antialias: true, alpha: false }}
+          gl={{ antialias: true, alpha: true }}
           dpr={[1, 2]}
           style={{ background: "#0a0a0a" }}
         >

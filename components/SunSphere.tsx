@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useMemo } from "react"
+import { useRef, useMemo, useEffect } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 
@@ -103,7 +103,11 @@ const fragmentShader = /* glsl */ `
 
 export default function SunSphere() {
   const meshRef = useRef<THREE.Mesh>(null)
-  const { pointer } = useThree()
+  const { pointer, gl } = useThree()
+
+  useEffect(() => {
+    gl.setClearColor(0x000000, 0)
+  }, [gl])
 
   const rotX = useRef(0)
   const rotY = useRef(0)
