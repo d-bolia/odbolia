@@ -75,212 +75,262 @@ const projectsData: Project[] = [
 ]
 
 const SPRING = { type: "spring" as const, stiffness: 300, damping: 30 }
-const IMG_FILTER = "brightness(0.22) saturate(0.4)"
+const IMG_DIM = "brightness(0.2) saturate(0.35)"
 
-// ── Icons — each clips the project photo inside its silhouette ────────────────
+// ── Icons ─────────────────────────────────────────────────────────────────────
 
+// Drone: realistic top-down quadcopter silhouette
+// Reference: drones.jpg — 3/4-perspective quads with swept arms, large prop discs, camera
 function DroneIcon({ uid, src }: { uid: string; src: string }) {
-  const rotors: [number, number][] = [[38, 38], [162, 38], [162, 162], [38, 162]]
+  // Rotors at true corners, body is a compact hexagon, arms swept back slightly
+  const rotors: [number, number][] = [[36, 42], [164, 42], [164, 158], [36, 158]]
+
   return (
     <svg viewBox="0 0 200 200" width="100%" height="100%" style={{ display: "block" }}>
       <defs>
         <clipPath id={uid}>
-          {rotors.map(([cx, cy], i) => (
-            <circle key={i} cx={cx} cy={cy} r={30} />
-          ))}
-          <rect x="15" y="94" width="170" height="12" transform="rotate(45 100 100)" />
-          <rect x="15" y="94" width="170" height="12" transform="rotate(-45 100 100)" />
-          <circle cx="100" cy="100" r="14" />
+          {/* Large prop discs */}
+          {rotors.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r={32} />)}
+
+          {/* Swept arms — angled rectangles connecting body to each rotor */}
+          {/* TL arm */}
+          <rect x="12" y="94" width="176" height="12" transform="rotate(40 100 100)" />
+          {/* TR arm */}
+          <rect x="12" y="94" width="176" height="12" transform="rotate(-40 100 100)" />
+
+          {/* Central body — hexagonal fuselage */}
+          <polygon points="100,76 118,88 118,112 100,124 82,112 82,88" />
+
+          {/* Camera gimbal — disc hanging at front of body */}
+          <ellipse cx="100" cy="134" rx="10" ry="8" />
+
+          {/* Landing gear stubs at body corners */}
+          <rect x="76" y="108" width="8" height="18" rx="2" />
+          <rect x="116" y="108" width="8" height="18" rx="2" />
         </clipPath>
       </defs>
 
       {/* Photo inside silhouette */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <image href={src} x="0" y="0" width="200" height="200"
         clipPath={`url(#${uid})`} preserveAspectRatio="xMidYMid slice"
-        style={{ filter: IMG_FILTER }} />
+        style={{ filter: IMG_DIM }} />
 
-      {/* Rotor rings */}
+      {/* Rotor housing rings */}
       {rotors.map(([cx, cy], i) => (
         <g key={i}>
-          <circle cx={cx} cy={cy} r={30} fill="none" stroke="rgba(232,232,232,0.78)" strokeWidth="1.3" />
-          <circle cx={cx} cy={cy} r={21} fill="none" stroke="rgba(232,232,232,0.28)" strokeWidth="0.7" />
-          <circle cx={cx} cy={cy} r={7}  fill="none" stroke="rgba(232,232,232,0.55)" strokeWidth="1" />
+          <circle cx={cx} cy={cy} r={32} fill="none" stroke="rgba(232,232,232,0.82)" strokeWidth="1.4" />
+          <circle cx={cx} cy={cy} r={23} fill="none" stroke="rgba(232,232,232,0.25)" strokeWidth="0.7" />
+          {/* Prop blades — two swept lines at 30° offset */}
+          <line
+            x1={cx - 28 * Math.cos(Math.PI / 6)} y1={cy - 28 * Math.sin(Math.PI / 6)}
+            x2={cx + 28 * Math.cos(Math.PI / 6)} y2={cy + 28 * Math.sin(Math.PI / 6)}
+            stroke="rgba(232,232,232,0.7)" strokeWidth="1.6" strokeLinecap="round" />
+          <line
+            x1={cx - 28 * Math.cos(Math.PI / 6 + Math.PI / 2)} y1={cy - 28 * Math.sin(Math.PI / 6 + Math.PI / 2)}
+            x2={cx + 28 * Math.cos(Math.PI / 6 + Math.PI / 2)} y2={cy + 28 * Math.sin(Math.PI / 6 + Math.PI / 2)}
+            stroke="rgba(232,232,232,0.35)" strokeWidth="1.6" strokeLinecap="round" />
+          {/* Motor hub */}
+          <circle cx={cx} cy={cy} r={7} fill="none" stroke="rgba(232,232,232,0.6)" strokeWidth="1" />
+          <circle cx={cx} cy={cy} r={3} fill="rgba(232,232,232,0.3)" />
         </g>
       ))}
-      {/* Propeller blades — 2 per rotor, cross pattern */}
-      {rotors.map(([cx, cy], i) => (
-        <g key={i}>
-          <line x1={cx - 26} y1={cy} x2={cx + 26} y2={cy}
-            stroke="rgba(232,232,232,0.68)" strokeWidth="1.5" />
-          <line x1={cx} y1={cy - 26} x2={cx} y2={cy + 26}
-            stroke="rgba(232,232,232,0.3)" strokeWidth="1.5" />
-        </g>
-      ))}
-      {/* Arm outlines */}
-      <rect x="15" y="95.5" width="170" height="9" fill="none"
-        stroke="rgba(232,232,232,0.32)" strokeWidth="0.8" transform="rotate(45 100 100)" />
-      <rect x="15" y="95.5" width="170" height="9" fill="none"
-        stroke="rgba(232,232,232,0.32)" strokeWidth="0.8" transform="rotate(-45 100 100)" />
-      {/* Center hub */}
-      <circle cx="100" cy="100" r="14" fill="none" stroke="rgba(232,232,232,0.82)" strokeWidth="1.4" />
-      <circle cx="100" cy="100" r="6"  fill="none" stroke="rgba(232,232,232,0.38)" strokeWidth="0.9" />
+
+      {/* Swept arm outlines */}
+      <rect x="12" y="94" width="176" height="12" fill="none"
+        stroke="rgba(232,232,232,0.3)" strokeWidth="0.8" transform="rotate(40 100 100)" />
+      <rect x="12" y="94" width="176" height="12" fill="none"
+        stroke="rgba(232,232,232,0.3)" strokeWidth="0.8" transform="rotate(-40 100 100)" />
+
+      {/* Body outline */}
+      <polygon points="100,76 118,88 118,112 100,124 82,112 82,88"
+        fill="none" stroke="rgba(232,232,232,0.85)" strokeWidth="1.4" />
+      {/* Body centre detail */}
+      <polygon points="100,84 110,90 110,110 100,116 90,110 90,90"
+        fill="none" stroke="rgba(232,232,232,0.22)" strokeWidth="0.7" />
+
+      {/* Camera gimbal */}
+      <ellipse cx="100" cy="134" rx="10" ry="8"
+        fill="none" stroke="rgba(232,232,232,0.7)" strokeWidth="1.2" />
+      <ellipse cx="100" cy="134" rx="5" ry="4"
+        fill="none" stroke="rgba(232,232,232,0.35)" strokeWidth="0.7" />
+
+      {/* Landing gear */}
+      <rect x="76" y="108" width="8" height="18" rx="2"
+        fill="none" stroke="rgba(232,232,232,0.5)" strokeWidth="1" />
+      <rect x="116" y="108" width="8" height="18" rx="2"
+        fill="none" stroke="rgba(232,232,232,0.5)" strokeWidth="1" />
     </svg>
   )
 }
 
-function ChipIcon({ uid, src }: { uid: string; src: string }) {
-  // QFP package: central die + 6 pins per side
-  const pins = [65, 77, 89, 101, 113, 125]
+// PCB: circuit trace layout — central QFP IC, 45° routed traces, via dots, component pads
+// Reference: pcb.jpg — horizontal panoramic PCB with IC centre and angular routing
+// Used for both PCB projects (MSPM0 and USB to UART)
+function PcbIcon({ uid, src }: { uid: string; src: string }) {
+  // Stroked paths inside clipPath contribute their stroke area to the clip region
+  const traceSw = 6  // trace strokeWidth for clipping
+
   return (
     <svg viewBox="0 0 200 200" width="100%" height="100%" style={{ display: "block" }}>
       <defs>
         <clipPath id={uid}>
-          <rect x="58" y="58" width="84" height="84" />
-          {pins.flatMap((v) => [
-            <rect key={`l${v}`} x="42" y={v} width="16" height="9" />,
-            <rect key={`r${v}`} x="142" y={v} width="16" height="9" />,
-            <rect key={`t${v}`} x={v} y="42" width="9" height="16" />,
-            <rect key={`b${v}`} x={v} y="142" width="9" height="16" />,
-          ])}
+          {/* Central IC body */}
+          <rect x="70" y="70" width="60" height="60" />
+
+          {/* QFP pins — 5 per side */}
+          {[78, 87, 96, 105, 114].map((v) => (
+            [
+              <rect key={`l${v}`} x="53" y={v} width="17" height="6" />,
+              <rect key={`r${v}`} x="130" y={v} width="17" height="6" />,
+              <rect key={`t${v}`} x={v} y="53" width="6" height="17" />,
+              <rect key={`b${v}`} x={v} y="130" width="6" height="17" />,
+            ]
+          ))}
+
+          {/* Traces — horizontal → 45° routing (stroke area used for clip) */}
+          {/* Left routes */}
+          <polyline points="70,84 36,84 18,66" fill="none" stroke="white" strokeWidth={traceSw} />
+          <polyline points="70,116 36,116 18,134" fill="none" stroke="white" strokeWidth={traceSw} />
+          {/* Right routes */}
+          <polyline points="130,84 164,84 182,66" fill="none" stroke="white" strokeWidth={traceSw} />
+          <polyline points="130,116 164,116 182,134" fill="none" stroke="white" strokeWidth={traceSw} />
+          {/* Top routes */}
+          <polyline points="84,70 84,44 66,26" fill="none" stroke="white" strokeWidth={traceSw} />
+          <polyline points="116,70 116,44 134,26" fill="none" stroke="white" strokeWidth={traceSw} />
+          {/* Bottom routes */}
+          <polyline points="84,130 84,156 66,174" fill="none" stroke="white" strokeWidth={traceSw} />
+          <polyline points="116,130 116,156 134,174" fill="none" stroke="white" strokeWidth={traceSw} />
+
+          {/* Component pads at trace ends */}
+          <rect x="8"  y="60"  width="16" height="12" />
+          <rect x="8"  y="128" width="16" height="12" />
+          <rect x="176" y="60"  width="16" height="12" />
+          <rect x="176" y="128" width="16" height="12" />
+          <rect x="58" y="16"  width="12" height="16" />
+          <rect x="130" y="16"  width="12" height="16" />
+          <rect x="58" y="168" width="12" height="16" />
+          <rect x="130" y="168" width="12" height="16" />
+
+          {/* Via dots at 45° elbows */}
+          {([
+            [36, 84], [36, 116], [164, 84], [164, 116],
+            [84, 44], [116, 44], [84, 156], [116, 156],
+          ] as [number, number][]).map(([cx, cy], i) => (
+            <circle key={i} cx={cx} cy={cy} r={5} />
+          ))}
         </clipPath>
       </defs>
 
-      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* Photo inside clip */}
       <image href={src} x="0" y="0" width="200" height="200"
         clipPath={`url(#${uid})`} preserveAspectRatio="xMidYMid slice"
-        style={{ filter: IMG_FILTER }} />
+        style={{ filter: IMG_DIM }} />
 
-      {/* Body */}
-      <rect x="58" y="58" width="84" height="84" fill="none" stroke="rgba(232,232,232,0.82)" strokeWidth="1.5" />
-      {/* Inner die area */}
-      <rect x="70" y="70" width="60" height="60" fill="none" stroke="rgba(232,232,232,0.22)" strokeWidth="0.8" />
+      {/* IC body strokes */}
+      <rect x="70" y="70" width="60" height="60" fill="none" stroke="rgba(232,232,232,0.88)" strokeWidth="1.5" />
+      <rect x="80" y="80" width="40" height="40" fill="none" stroke="rgba(232,232,232,0.2)" strokeWidth="0.7" />
       {/* Pin 1 dot */}
-      <circle cx="65" cy="65" r="3" fill="rgba(232,232,232,0.55)" />
-      {/* Pins */}
-      {pins.map((v) => (
+      <circle cx="76" cy="76" r="2.5" fill="rgba(232,232,232,0.6)" />
+
+      {/* IC pin outlines */}
+      {[78, 87, 96, 105, 114].map((v) => (
         <g key={v}>
-          <rect x="42" y={v} width="16" height="9" fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
-          <rect x="142" y={v} width="16" height="9" fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
-          <rect x={v} y="42" width="9" height="16" fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
-          <rect x={v} y="142" width="9" height="16" fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
+          <rect x="53" y={v} width="17" height="6" fill="none" stroke="rgba(232,232,232,0.6)" strokeWidth="0.9" />
+          <rect x="130" y={v} width="17" height="6" fill="none" stroke="rgba(232,232,232,0.6)" strokeWidth="0.9" />
+          <rect x={v} y="53" width="6" height="17" fill="none" stroke="rgba(232,232,232,0.6)" strokeWidth="0.9" />
+          <rect x={v} y="130" width="6" height="17" fill="none" stroke="rgba(232,232,232,0.6)" strokeWidth="0.9" />
         </g>
       ))}
-      {/* Internal trace cross */}
-      <line x1="70" y1="100" x2="130" y2="100" stroke="rgba(232,232,232,0.15)" strokeWidth="0.7" />
-      <line x1="100" y1="70" x2="100" y2="130" stroke="rgba(232,232,232,0.15)" strokeWidth="0.7" />
+
+      {/* Trace lines */}
+      {([
+        "70,84 36,84 18,66",
+        "70,116 36,116 18,134",
+        "130,84 164,84 182,66",
+        "130,116 164,116 182,134",
+        "84,70 84,44 66,26",
+        "116,70 116,44 134,26",
+        "84,130 84,156 66,174",
+        "116,130 116,156 134,174",
+      ] as string[]).map((pts, i) => (
+        <polyline key={i} points={pts} fill="none" stroke="rgba(232,232,232,0.52)" strokeWidth="1.1" />
+      ))}
+
+      {/* Component pads */}
+      {([
+        [8, 60, 16, 12], [8, 128, 16, 12],
+        [176, 60, 16, 12], [176, 128, 16, 12],
+        [58, 16, 12, 16], [130, 16, 12, 16],
+        [58, 168, 12, 16], [130, 168, 12, 16],
+      ] as [number, number, number, number][]).map(([x, y, w, h], i) => (
+        <rect key={i} x={x} y={y} width={w} height={h}
+          fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="1" />
+      ))}
+
+      {/* Via rings */}
+      {([
+        [36, 84], [36, 116], [164, 84], [164, 116],
+        [84, 44], [116, 44], [84, 156], [116, 156],
+      ] as [number, number][]).map(([cx, cy], i) => (
+        <g key={i}>
+          <circle cx={cx} cy={cy} r={5} fill="none" stroke="rgba(232,232,232,0.75)" strokeWidth="1.1" />
+          <circle cx={cx} cy={cy} r={2} fill="rgba(232,232,232,0.35)" />
+        </g>
+      ))}
     </svg>
   )
 }
 
-function UsbIcon({ uid, src }: { uid: string; src: string }) {
-  // USB trident symbol — top circle, main stem, horizontal bar, left+right arms with terminals
-  return (
-    <svg viewBox="0 0 200 200" width="100%" height="100%" style={{ display: "block" }}>
-      <defs>
-        <clipPath id={uid}>
-          {/* Top circle */}
-          <circle cx="100" cy="36" r="24" />
-          {/* Main stem */}
-          <rect x="93" y="60" width="14" height="68" />
-          {/* Horizontal bar */}
-          <rect x="44" y="120" width="112" height="13" />
-          {/* Left arm */}
-          <rect x="44" y="82" width="13" height="51" />
-          {/* Right arm */}
-          <rect x="143" y="82" width="13" height="51" />
-          {/* Left terminal — square */}
-          <rect x="26" y="64" width="30" height="30" />
-          {/* Right terminal — triangle pointing right */}
-          <polygon points="143,64 175,79 143,94" />
-          {/* Bottom connector stub */}
-          <rect x="93" y="133" width="14" height="30" />
-          <rect x="80" y="158" width="40" height="10" />
-        </clipPath>
-      </defs>
-
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <image href={src} x="0" y="0" width="200" height="200"
-        clipPath={`url(#${uid})`} preserveAspectRatio="xMidYMid slice"
-        style={{ filter: IMG_FILTER }} />
-
-      {/* Top circle */}
-      <circle cx="100" cy="36" r="24" fill="none" stroke="rgba(232,232,232,0.8)" strokeWidth="1.4" />
-      {/* Inner circle (contacts) */}
-      <circle cx="100" cy="36" r="14" fill="none" stroke="rgba(232,232,232,0.28)" strokeWidth="0.8" />
-      {/* Main stem */}
-      <rect x="93" y="60" width="14" height="68" fill="none" stroke="rgba(232,232,232,0.5)" strokeWidth="0.9" />
-      {/* Horizontal bar */}
-      <rect x="44" y="120" width="112" height="13" fill="none" stroke="rgba(232,232,232,0.55)" strokeWidth="1" />
-      {/* Left arm */}
-      <rect x="44" y="82" width="13" height="51" fill="none" stroke="rgba(232,232,232,0.55)" strokeWidth="1" />
-      {/* Right arm */}
-      <rect x="143" y="82" width="13" height="51" fill="none" stroke="rgba(232,232,232,0.55)" strokeWidth="1" />
-      {/* Left terminal */}
-      <rect x="26" y="64" width="30" height="30" fill="none" stroke="rgba(232,232,232,0.78)" strokeWidth="1.3" />
-      {/* Right terminal */}
-      <polygon points="143,64 175,79 143,94" fill="none" stroke="rgba(232,232,232,0.78)" strokeWidth="1.3" />
-      {/* Bottom stub */}
-      <rect x="93" y="133" width="14" height="30" fill="none" stroke="rgba(232,232,232,0.4)" strokeWidth="0.8" />
-      <rect x="80" y="158" width="40" height="10" fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="1" />
-    </svg>
-  )
-}
-
+// VLSI: silicon wafer — circle with die-array grid + corner registration marks
+// Reference: vlsi.png — wafer circle, uniform grid, L-bracket corners
 function VlsiIcon({ uid, src }: { uid: string; src: string }) {
-  // Silicon die with bond pads protruding outside the die boundary
-  const dX = 42, dY = 42, dW = 116, dH = 116
-  const padXs = [57, 82, 107, 132]
-  const padYs = [57, 82, 107, 132]
-  const pw = 12, ph = 14
+  const cx = 100, cy = 100, r = 76
+  // Grid lines every 13px across the wafer diameter
+  const gridLines = [22, 35, 48, 61, 74, 87, 100, 113, 126, 139, 152, 165, 178]
 
   return (
-    <svg viewBox="0 0 200 200" width="100%" height="100%" style={{ display: "block" }}>
+    <svg viewBox="0 0 200 200" width="100%" height={{ display: "block" } as never}
+      style={{ display: "block", width: "100%", height: "100%" }}>
       <defs>
+        {/* Clip: just the wafer circle */}
         <clipPath id={uid}>
-          <rect x={dX} y={dY} width={dW} height={dH} />
-          {/* Bond pads — top, bottom, left, right */}
-          {padXs.flatMap((x) => [
-            <rect key={`t${x}`} x={x} y={dY - ph + 4} width={pw} height={ph} />,
-            <rect key={`b${x}`} x={x} y={dY + dH - 4} width={pw} height={ph} />,
-          ])}
-          {padYs.flatMap((y) => [
-            <rect key={`l${y}`} x={dX - ph + 4} y={y} width={ph} height={pw} />,
-            <rect key={`r${y}`} x={dX + dW - 4} y={y} width={ph} height={pw} />,
-          ])}
+          <circle cx={cx} cy={cy} r={r} />
+        </clipPath>
+        {/* Second clip for grid lines (reuse wafer shape) */}
+        <clipPath id={`${uid}-g`}>
+          <circle cx={cx} cy={cy} r={r} />
         </clipPath>
       </defs>
 
-      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* Photo inside wafer circle */}
       <image href={src} x="0" y="0" width="200" height="200"
         clipPath={`url(#${uid})`} preserveAspectRatio="xMidYMid slice"
-        style={{ filter: IMG_FILTER }} />
+        style={{ filter: IMG_DIM }} />
 
-      {/* Die outline */}
-      <rect x={dX} y={dY} width={dW} height={dH} fill="none" stroke="rgba(232,232,232,0.85)" strokeWidth="1.5" />
-      {/* Bond pads */}
-      {padXs.map((x) => (
-        <g key={x}>
-          <rect x={x} y={dY - ph + 4} width={pw} height={ph} fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
-          <rect x={x} y={dY + dH - 4} width={pw} height={ph} fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
-        </g>
-      ))}
-      {padYs.map((y) => (
-        <g key={y}>
-          <rect x={dX - ph + 4} y={y} width={ph} height={pw} fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
-          <rect x={dX + dW - 4} y={y} width={ph} height={pw} fill="none" stroke="rgba(232,232,232,0.65)" strokeWidth="0.9" />
-        </g>
-      ))}
-      {/* Internal logic blocks */}
-      <rect x="56" y="56" width="38" height="34" fill="none" stroke="rgba(232,232,232,0.2)" strokeWidth="0.8" />
-      <rect x="106" y="56" width="38" height="34" fill="none" stroke="rgba(232,232,232,0.2)" strokeWidth="0.8" />
-      <rect x="56" y="110" width="38" height="34" fill="none" stroke="rgba(232,232,232,0.2)" strokeWidth="0.8" />
-      <rect x="106" y="110" width="38" height="34" fill="none" stroke="rgba(232,232,232,0.2)" strokeWidth="0.8" />
-      {/* Interconnect traces between blocks */}
-      <line x1="94" y1="73"  x2="106" y2="73"  stroke="rgba(232,232,232,0.18)" strokeWidth="0.8" />
-      <line x1="75" y1="90"  x2="75"  y2="110" stroke="rgba(232,232,232,0.18)" strokeWidth="0.8" />
-      <line x1="94" y1="127" x2="106" y2="127" stroke="rgba(232,232,232,0.18)" strokeWidth="0.8" />
-      <line x1="125" y1="90" x2="125" y2="110" stroke="rgba(232,232,232,0.18)" strokeWidth="0.8" />
+      {/* Die-array grid — clipped to wafer circle */}
+      <g clipPath={`url(#${uid}-g)`}>
+        {gridLines.map((v) => (
+          <g key={v}>
+            <line x1={v} y1="0" x2={v} y2="200" stroke="rgba(232,232,232,0.55)" strokeWidth="0.85" />
+            <line x1="0" y1={v} x2="200" y2={v} stroke="rgba(232,232,232,0.55)" strokeWidth="0.85" />
+          </g>
+        ))}
+      </g>
+
+      {/* Wafer outline */}
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(232,232,232,0.9)" strokeWidth="1.6" />
+      {/* Flat (wafer orientation notch) — small chord at bottom */}
+      <line x1="86" y1="175.2" x2="114" y2="175.2" stroke="rgba(232,232,232,0.9)" strokeWidth="1.6" />
+
+      {/* Corner registration marks — L-brackets at each corner */}
+      {/* Top-left */}
+      <path d="M10,22 L10,10 L22,10" fill="none" stroke="rgba(232,232,232,0.75)" strokeWidth="1.6" />
+      {/* Top-right */}
+      <path d="M178,10 L190,10 L190,22" fill="none" stroke="rgba(232,232,232,0.75)" strokeWidth="1.6" />
+      {/* Bottom-left */}
+      <path d="M10,178 L10,190 L22,190" fill="none" stroke="rgba(232,232,232,0.75)" strokeWidth="1.6" />
+      {/* Bottom-right */}
+      <path d="M178,190 L190,190 L190,178" fill="none" stroke="rgba(232,232,232,0.75)" strokeWidth="1.6" />
     </svg>
   )
 }
@@ -288,35 +338,31 @@ function VlsiIcon({ uid, src }: { uid: string; src: string }) {
 function ProjectIcon({ project }: { project: Project }) {
   const uid = `clip-p${project.id}`
   const src = project.images[0] ?? ""
-  switch (project.id) {
-    case 1: return <DroneIcon uid={uid} src={src} />
-    case 2: return <ChipIcon  uid={uid} src={src} />
-    case 3: return <UsbIcon   uid={uid} src={src} />
-    case 4: return <VlsiIcon  uid={uid} src={src} />
-    default: return null
-  }
+  // Both PCB projects share the same icon type
+  if (project.id === 1) return <DroneIcon uid={uid} src={src} />
+  if (project.id === 4) return <VlsiIcon  uid={uid} src={src} />
+  return <PcbIcon uid={uid} src={src} />
 }
 
-// ── Image slider (used in expanded card) ──────────────────────────────────────
+// ── Image slider ──────────────────────────────────────────────────────────────
 
 function ImageSlider({ images, title }: { images: string[]; title: string }) {
   const [index, setIndex] = useState(0)
   const prev = () => setIndex((i) => (i - 1 + images.length) % images.length)
   const next = () => setIndex((i) => (i + 1) % images.length)
-  if (images.length === 0) return null
+  if (!images.length) return null
 
   return (
     <div style={{ position: "relative", width: "100%", userSelect: "none" }}>
       <div style={{
         position: "relative", width: "100%", aspectRatio: "16/9",
-        background: "#111", borderRadius: 6, overflow: "hidden",
+        background: "#111", borderRadius: 4, overflow: "hidden",
         border: "1px solid rgba(255,255,255,0.07)",
       }}>
         <AnimatePresence mode="wait">
           <motion.div key={index}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            style={{ position: "absolute", inset: 0 }}>
+            transition={{ duration: 0.2 }} style={{ position: "absolute", inset: 0 }}>
             <Image src={images[index]} alt={`${title} — image ${index + 1}`} fill
               style={{ objectFit: "contain" }} sizes="(max-width: 900px) 100vw, 60vw" />
           </motion.div>
@@ -356,7 +402,7 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
   )
 }
 
-// ── Main section ──────────────────────────────────────────────────────────────
+// ── Section ───────────────────────────────────────────────────────────────────
 
 export default function Projects() {
   const [expandedId, setExpandedId] = useState<number | null>(null)
@@ -393,66 +439,88 @@ export default function Projects() {
         </motion.div>
       </div>
 
-      {/* Card grid */}
+      {/* Vertical card list — one per row, icon left, title right */}
       <div style={{
         padding: "0 clamp(2rem, 8vw, 8rem)",
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: "1rem",
+        display: "flex",
+        flexDirection: "column",
       }}>
         {projectsData.map((project, i) => (
           <motion.div
             key={project.id}
-            layoutId={`card-${project.id}`}
             onClick={() => setExpandedId(project.id)}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-            whileHover={{ borderColor: "rgba(232,232,232,0.28)" }}
+            transition={{ duration: 0.65, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              position: "relative",
-              aspectRatio: "1",
-              border: "1px solid rgba(232,232,232,0.1)",
-              borderRadius: 3,
+              display: "flex",
+              alignItems: "center",
+              gap: "clamp(1.5rem, 4vw, 4rem)",
+              padding: "2.25rem 0",
+              borderTop: "1px solid rgba(232,232,232,0.07)",
               cursor: "pointer",
-              overflow: "hidden",
-              background: "#0d0d0d",
             }}
           >
-            {/* Icon fills the entire card */}
-            <div style={{ position: "absolute", inset: 0 }}>
+            {/* Icon — square, fixed size */}
+            <motion.div
+              whileHover={{ scale: 1.04 }}
+              transition={SPRING}
+              style={{
+                width:    "clamp(120px, 16vw, 200px)",
+                height:   "clamp(120px, 16vw, 200px)",
+                flexShrink: 0,
+              }}
+            >
               <ProjectIcon project={project} />
-            </div>
+            </motion.div>
 
-            {/* Title — centered, overlaid at bottom */}
-            <div style={{
-              position: "absolute", bottom: 0, left: 0, right: 0,
-              padding: "2.5rem 0.75rem 0.85rem",
-              background: "linear-gradient(to bottom, transparent, rgba(8,8,8,0.95))",
-              textAlign: "center",
-            }}>
+            {/* Text */}
+            <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{
-                fontFamily: "var(--font-mono), monospace",
-                fontWeight: 500,
-                fontSize: "clamp(0.7rem, 1vw, 0.82rem)",
-                letterSpacing: "0.1em",
+                fontFamily:    "var(--font-mono), monospace",
+                fontWeight:    300,
+                fontSize:      "clamp(0.65rem, 0.85vw, 0.75rem)",
+                letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                color: "#e8e8e8",
-                margin: 0,
+                color:         "rgba(232,232,232,0.28)",
+                marginBottom:  "0.5rem",
+              }}>
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <p style={{
+                fontFamily:    "var(--font-display), var(--font-mono), sans-serif",
+                fontWeight:    700,
+                fontSize:      "clamp(1rem, 2.2vw, 1.75rem)",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                color:         "#e8e8e8",
+                lineHeight:    1.15,
+                margin:        0,
               }}>
                 {project.title}
               </p>
             </div>
+
+            {/* Arrow hint */}
+            <span style={{
+              fontFamily:    "var(--font-mono), monospace",
+              fontSize:      "clamp(0.8rem, 1.2vw, 1rem)",
+              color:         "rgba(232,232,232,0.2)",
+              flexShrink:    0,
+            }}>
+              →
+            </span>
           </motion.div>
         ))}
+        {/* Bottom rule */}
+        <div style={{ borderTop: "1px solid rgba(232,232,232,0.07)" }} />
       </div>
 
       {/* Expanded overlay */}
       <AnimatePresence>
         {expanded && (
           <>
-            {/* Backdrop */}
             <motion.div key="backdrop"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.22 }} onClick={close}
@@ -461,23 +529,24 @@ export default function Projects() {
                 zIndex: 200, backdropFilter: "blur(5px)",
               }} />
 
-            {/* Centering shell — NOT the layoutId element */}
             <div style={{
               position: "fixed", inset: 0, zIndex: 201,
               display: "flex", alignItems: "center", justifyContent: "center",
               padding: "2rem", pointerEvents: "none",
             }}>
               <motion.div
-                layoutId={`card-${expanded.id}`}
+                key={`modal-${expanded.id}`}
+                initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 16 }}
                 transition={SPRING}
                 style={{
                   width: "min(100%, 860px)", maxHeight: "85vh", overflowY: "auto",
-                  background: "#0e0e0e", border: "1px solid rgba(255,255,255,0.1)",
+                  background: "#0e0e0e", border: "1px solid rgba(255,255,255,0.09)",
                   borderRadius: 4, pointerEvents: "all", position: "relative",
                 }}
               >
                 <div style={{ padding: "clamp(1.5rem, 4vw, 2.25rem)" }}>
-                  {/* Close */}
                   <button onClick={close} aria-label="Close" style={{
                     position: "absolute", top: 14, right: 14,
                     background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
@@ -486,7 +555,6 @@ export default function Projects() {
                     display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1,
                   }}>×</button>
 
-                  {/* Title */}
                   <h3 style={{
                     fontFamily: "var(--font-display), var(--font-mono), sans-serif",
                     fontWeight: 700, fontSize: "clamp(1rem, 2.2vw, 1.45rem)",
@@ -496,12 +564,10 @@ export default function Projects() {
                     {expanded.title}
                   </h3>
 
-                  {/* Slider */}
                   <div style={{ marginBottom: "1.75rem" }}>
                     <ImageSlider images={expanded.images} title={expanded.title} />
                   </div>
 
-                  {/* Description */}
                   <p style={{
                     fontFamily: "var(--font-mono), monospace", fontWeight: 300,
                     fontSize: "clamp(0.76rem, 1.05vw, 0.86rem)", color: "rgba(232,232,232,0.6)",
@@ -510,7 +576,6 @@ export default function Projects() {
                     {expanded.description}
                   </p>
 
-                  {/* Tags */}
                   <div style={{
                     display: "flex", flexWrap: "wrap", gap: 6,
                     marginBottom: expanded.github ? "1.5rem" : 0,
@@ -525,7 +590,6 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  {/* GitHub */}
                   {expanded.github && (
                     <a href={expanded.github} target="_blank" rel="noopener noreferrer" style={{
                       display: "inline-flex", alignItems: "center", gap: 8,
