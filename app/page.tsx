@@ -6,6 +6,8 @@ import { Canvas } from "@react-three/fiber"
 
 import HeroSection from "@/components/HeroSection"
 import AboutSection from "@/components/AboutSection"
+import Timeline from "@/components/Timeline"
+import Projects from "@/components/Projects"
 import PortfolioSection from "@/components/PortfolioSection"
 import ContactSection from "@/components/ContactSection"
 import BranchPanel from "@/components/BranchPanel"
@@ -14,6 +16,11 @@ import ProjectBranch from "@/components/ProjectBranch"
 import FixedNav from "@/components/FixedNav"
 import MiniSphere from "@/components/MiniSphere"
 import { Waves } from "@/components/Waves"
+
+// Disable browser scroll restoration so refresh always starts at the top
+if (typeof window !== "undefined") {
+  history.scrollRestoration = "manual"
+}
 
 type BranchId = "about" | "drone" | "vlsi" | "adder" | "otft" | null
 type LoopPhase = "idle" | "covering" | "uncovering"
@@ -35,7 +42,15 @@ export default function Home() {
   const portfolioRef = useRef<HTMLElement>(null)
   const contactRef   = useRef<HTMLElement>(null)
   const sentinelRef  = useRef<HTMLDivElement>(null)
-  const isLoopingRef = useRef(false)
+  const isLoopingRef      = useRef(false)
+  const sentinelVisibleRef = useRef(false)
+  const touchStartYRef     = useRef(0)
+
+  // Force scroll to top before any scroll-driven transforms initialize
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
 
   // ── Hero exit detection ───────────────────────────────────────────────────
   useEffect(() => {
@@ -55,7 +70,7 @@ export default function Home() {
     isLoopingRef.current = true
 
     setLoopPhase("covering")
-    await new Promise<void>((r) => setTimeout(r, 650))
+    await new Promise<void>((r) => setTimeout(r, 1200))
 
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior })
     setPastHero(false)
@@ -71,12 +86,37 @@ export default function Home() {
   useEffect(() => {
     const el = sentinelRef.current
     if (!el) return
+
+    // Track whether the bottom sentinel is visible
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) triggerLoop() },
-      { threshold: 0.8 }
+      ([e]) => { sentinelVisibleRef.current = e.isIntersecting },
+      { threshold: 0.5 }
     )
     obs.observe(el)
-    return () => obs.disconnect()
+
+    // Only loop when user intentionally scrolls down past the sentinel
+    const onWheel = (e: WheelEvent) => {
+      if (sentinelVisibleRef.current && e.deltaY > 0) triggerLoop()
+    }
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartYRef.current = e.touches[0].clientY
+    }
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!sentinelVisibleRef.current) return
+      const delta = touchStartYRef.current - e.changedTouches[0].clientY
+      if (delta > 30) triggerLoop() // swipe-up = scroll-down
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: true })
+    window.addEventListener("touchstart", onTouchStart, { passive: true })
+    window.addEventListener("touchend", onTouchEnd, { passive: true })
+
+    return () => {
+      obs.disconnect()
+      window.removeEventListener("wheel", onWheel)
+      window.removeEventListener("touchstart", onTouchStart)
+      window.removeEventListener("touchend", onTouchEnd)
+    }
   }, [triggerLoop])
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -88,7 +128,7 @@ export default function Home() {
     <>
       {/* ── Sections ─────────────────────────────────────────────────────── */}
       <div ref={heroRef}>
-        <HeroSection />
+        <HeroSection pastHero={pastHero} />
       </div>
 
       <AboutSection
@@ -96,6 +136,8 @@ export default function Home() {
         onOpenBranch={() => setActiveBranch("about")}
         branchOpen={activeBranch === "about"}
       />
+      <Timeline />
+      <Projects />
       <PortfolioSection
         sectionRef={portfolioRef}
         onOpenBranch={(id) => setActiveBranch(id)}
@@ -128,10 +170,10 @@ export default function Home() {
         {pastHero && loopPhase === "idle" && (
           <motion.div
             key="mini-sphere"
-            initial={{ opacity: 0, scale: 0 }}
+            initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            transition={{ type: "spring", damping: 22, stiffness: 260 }}
+            exit={{ opacity: 0, scale: 0.7 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             onClick={scrollToHero}
             title="Return to top"
             style={{
@@ -195,7 +237,10 @@ export default function Home() {
           key="loop-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: loopPhase === "covering" ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{
+            duration: loopPhase === "covering" ? 0.9 : 1.1,
+            ease: "easeInOut",
+          }}
           onAnimationComplete={
             loopPhase === "uncovering" ? handleLoopDone : undefined
           }
