@@ -6,13 +6,10 @@ import { Canvas } from "@react-three/fiber"
 
 import HeroSection from "@/components/HeroSection"
 import AboutSection from "@/components/AboutSection"
-import Timeline from "@/components/Timeline"
 import Projects from "@/components/Projects"
-import PortfolioSection from "@/components/PortfolioSection"
 import ContactSection from "@/components/ContactSection"
 import BranchPanel from "@/components/BranchPanel"
 import AboutBranch from "@/components/AboutBranch"
-import ProjectBranch from "@/components/ProjectBranch"
 import FixedNav from "@/components/FixedNav"
 import MiniSphere from "@/components/MiniSphere"
 import { Waves } from "@/components/Waves"
@@ -22,7 +19,6 @@ if (typeof window !== "undefined") {
   history.scrollRestoration = "manual"
 }
 
-type BranchId = "about" | "drone" | "vlsi" | "adder" | "otft" | null
 type LoopPhase = "idle" | "covering" | "uncovering"
 
 const WAVE_GRADIENT = [
@@ -33,16 +29,15 @@ const WAVE_GRADIENT = [
 ]
 
 export default function Home() {
-  const [pastHero,     setPastHero]     = useState(false)
-  const [activeBranch, setActiveBranch] = useState<BranchId>(null)
-  const [loopPhase,    setLoopPhase]    = useState<LoopPhase>("idle")
+  const [pastHero,      setPastHero]      = useState(false)
+  const [branchOpen,    setBranchOpen]    = useState(false)
+  const [loopPhase,     setLoopPhase]     = useState<LoopPhase>("idle")
 
   const heroRef      = useRef<HTMLDivElement>(null)
   const aboutRef     = useRef<HTMLElement>(null)
-  const portfolioRef = useRef<HTMLElement>(null)
   const contactRef   = useRef<HTMLElement>(null)
   const sentinelRef  = useRef<HTMLDivElement>(null)
-  const isLoopingRef      = useRef(false)
+  const isLoopingRef       = useRef(false)
   const sentinelVisibleRef = useRef(false)
   const touchStartYRef     = useRef(0)
 
@@ -50,7 +45,6 @@ export default function Home() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
 
   // ── Hero exit detection ───────────────────────────────────────────────────
   useEffect(() => {
@@ -87,14 +81,12 @@ export default function Home() {
     const el = sentinelRef.current
     if (!el) return
 
-    // Track whether the bottom sentinel is visible
     const obs = new IntersectionObserver(
       ([e]) => { sentinelVisibleRef.current = e.isIntersecting },
       { threshold: 0.5 }
     )
     obs.observe(el)
 
-    // Only loop when user intentionally scrolls down past the sentinel
     const onWheel = (e: WheelEvent) => {
       if (sentinelVisibleRef.current && e.deltaY > 0) triggerLoop()
     }
@@ -104,7 +96,7 @@ export default function Home() {
     const onTouchEnd = (e: TouchEvent) => {
       if (!sentinelVisibleRef.current) return
       const delta = touchStartYRef.current - e.changedTouches[0].clientY
-      if (delta > 30) triggerLoop() // swipe-up = scroll-down
+      if (delta > 30) triggerLoop()
     }
 
     window.addEventListener("wheel", onWheel, { passive: true })
@@ -133,15 +125,10 @@ export default function Home() {
 
       <AboutSection
         sectionRef={aboutRef}
-        onOpenBranch={() => setActiveBranch("about")}
-        branchOpen={activeBranch === "about"}
+        onOpenBranch={() => setBranchOpen(true)}
+        branchOpen={branchOpen}
       />
-      <Timeline />
       <Projects />
-      <PortfolioSection
-        sectionRef={portfolioRef}
-        onOpenBranch={(id) => setActiveBranch(id)}
-      />
       <ContactSection sectionRef={contactRef} />
 
       {/* Invisible sentinel that triggers the carousel loop */}
@@ -215,18 +202,14 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* ── Branch panels ─────────────────────────────────────────────────── */}
+      {/* ── About / Career Journey branch panel ───────────────────────────── */}
       <AnimatePresence>
-        {activeBranch && (
+        {branchOpen && (
           <BranchPanel
-            key={activeBranch}
-            onClose={() => setActiveBranch(null)}
+            key="about-branch"
+            onClose={() => setBranchOpen(false)}
           >
-            {activeBranch === "about" ? (
-              <AboutBranch />
-            ) : (
-              <ProjectBranch projectId={activeBranch} />
-            )}
+            <AboutBranch />
           </BranchPanel>
         )}
       </AnimatePresence>
@@ -252,7 +235,6 @@ export default function Home() {
             pointerEvents: "all",
           }}
         >
-          {/* Full sphere as transition visual */}
           <Canvas
             camera={{ position: [0, 0, 6.5], fov: 55 }}
             gl={{ antialias: true, alpha: false }}

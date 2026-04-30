@@ -87,13 +87,13 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
     <div style={{ position: "relative", width: "100%", userSelect: "none" }}>
       <div
         style={{
-          position:     "relative",
-          width:        "100%",
-          aspectRatio:  "16/9",
-          background:   "#111",
+          position:    "relative",
+          width:       "100%",
+          aspectRatio: "16/9",
+          background:  "#111",
           borderRadius: 6,
-          overflow:     "hidden",
-          border:       "1px solid rgba(255,255,255,0.07)",
+          overflow:    "hidden",
+          border:      "1px solid rgba(255,255,255,0.07)",
         }}
       >
         <AnimatePresence mode="wait">
@@ -102,7 +102,7 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.22 }}
             style={{ position: "absolute", inset: 0 }}
           >
             <Image
@@ -118,15 +118,14 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
 
       {images.length > 1 && (
         <>
-          {/* Prev button */}
           <button
             onClick={prev}
             style={{
-              position:     "absolute",
-              left:         8,
-              top:          "50%",
-              transform:    "translateY(-50%)",
-              background:   "rgba(10,10,10,0.7)",
+              position:  "absolute",
+              left:      8,
+              top:       "50%",
+              transform: "translateY(-50%)",
+              background:   "rgba(10,10,10,0.75)",
               border:       "1px solid rgba(255,255,255,0.1)",
               borderRadius: 4,
               color:        "#e8e8e8",
@@ -134,7 +133,7 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
               height:       32,
               cursor:       "pointer",
               fontFamily:   "var(--font-mono), monospace",
-              fontSize:     14,
+              fontSize:     18,
               display:      "flex",
               alignItems:   "center",
               justifyContent: "center",
@@ -144,15 +143,14 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
           >
             ‹
           </button>
-          {/* Next button */}
           <button
             onClick={next}
             style={{
-              position:     "absolute",
-              right:        8,
-              top:          "50%",
-              transform:    "translateY(-50%)",
-              background:   "rgba(10,10,10,0.7)",
+              position:  "absolute",
+              right:     8,
+              top:       "50%",
+              transform: "translateY(-50%)",
+              background:   "rgba(10,10,10,0.75)",
               border:       "1px solid rgba(255,255,255,0.1)",
               borderRadius: 4,
               color:        "#e8e8e8",
@@ -160,7 +158,7 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
               height:       32,
               cursor:       "pointer",
               fontFamily:   "var(--font-mono), monospace",
-              fontSize:     14,
+              fontSize:     18,
               display:      "flex",
               alignItems:   "center",
               justifyContent: "center",
@@ -170,22 +168,21 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
           >
             ›
           </button>
-          {/* Dots */}
           <div
             style={{
-              position:       "absolute",
-              bottom:         8,
-              left:           "50%",
-              transform:      "translateX(-50%)",
-              display:        "flex",
-              gap:            6,
+              position:  "absolute",
+              bottom:    8,
+              left:      "50%",
+              transform: "translateX(-50%)",
+              display:   "flex",
+              gap:       6,
             }}
           >
             {images.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setIndex(i)}
-                aria-label={`Go to image ${i + 1}`}
+                aria-label={`Image ${i + 1}`}
                 style={{
                   width:        i === index ? 20 : 6,
                   height:       6,
@@ -205,123 +202,12 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
   )
 }
 
-function ProjectCard({
-  project,
-  isExpanded,
-  onExpand,
-  isCompressed,
-}: {
-  project: Project
-  isExpanded: boolean
-  onExpand: () => void
-  isCompressed: boolean
-}) {
-  return (
-    <motion.div
-      layoutId={`card-${project.id}`}
-      onClick={!isExpanded ? onExpand : undefined}
-      transition={SPRING}
-      style={{
-        background:   "rgba(255,255,255,0.03)",
-        border:       "1px solid rgba(255,255,255,0.08)",
-        borderRadius: 8,
-        cursor:       isExpanded ? "default" : "pointer",
-        overflow:     "hidden",
-        flexShrink:   0,
-      }}
-      whileHover={!isExpanded && !isCompressed ? { borderColor: "rgba(6,182,212,0.4)", background: "rgba(255,255,255,0.05)" } : {}}
-    >
-      {/* Collapsed thumbnail */}
-      {!isExpanded && (
-        <div>
-          {project.images[0] && (
-            <div
-              style={{
-                position:   "relative",
-                width:      "100%",
-                aspectRatio: "16/9",
-                background: "#111",
-                overflow:   "hidden",
-              }}
-            >
-              <Image
-                src={project.images[0]}
-                alt={project.title}
-                fill
-                style={{ objectFit: "cover", opacity: 0.7 }}
-                sizes="300px"
-              />
-              <div
-                style={{
-                  position:   "absolute",
-                  inset:      0,
-                  background: "linear-gradient(to bottom, transparent 40%, rgba(10,10,10,0.9))",
-                }}
-              />
-            </div>
-          )}
-          <div style={{ padding: "1rem 1.2rem 1.2rem" }}>
-            <p
-              style={{
-                fontFamily:    "var(--font-display), var(--font-mono), sans-serif",
-                fontWeight:    700,
-                fontSize:      "clamp(0.82rem, 1.1vw, 0.95rem)",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color:         "#e8e8e8",
-                marginBottom:  "0.5rem",
-              }}
-            >
-              {project.title}
-            </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {project.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    fontFamily:    "var(--font-mono), monospace",
-                    fontSize:      "0.62rem",
-                    letterSpacing: "0.06em",
-                    color:         "rgba(6,182,212,0.7)",
-                    background:    "rgba(6,182,212,0.07)",
-                    border:        "1px solid rgba(6,182,212,0.15)",
-                    borderRadius:  3,
-                    padding:       "2px 6px",
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-              {project.tags.length > 3 && (
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontSize:   "0.62rem",
-                    color:      "rgba(232,232,232,0.3)",
-                    padding:    "2px 4px",
-                  }}
-                >
-                  +{project.tags.length - 3}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </motion.div>
-  )
-}
-
 export default function Projects() {
   const [expandedId, setExpandedId] = useState<number | null>(null)
-
   const close = useCallback(() => setExpandedId(null), [])
 
-  // Close on Escape
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close()
-    }
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") close() }
     window.addEventListener("keydown", handler)
     return () => window.removeEventListener("keydown", handler)
   }, [close])
@@ -333,17 +219,12 @@ export default function Projects() {
       id="projects"
       style={{
         background: "#0a0a0a",
-        padding:    "0 0 10rem",
+        padding:    "8rem 0 10rem",
         position:   "relative",
       }}
     >
       {/* Section heading */}
-      <div
-        style={{
-          padding:      "0 clamp(2rem, 8vw, 8rem)",
-          marginBottom: "3.5rem",
-        }}
-      >
+      <div style={{ padding: "0 clamp(2rem, 8vw, 8rem)", marginBottom: "3.5rem" }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -362,14 +243,14 @@ export default function Projects() {
               textTransform: "uppercase",
               background:    "rgba(255,255,255,0.03)",
               border:        "1px solid rgba(255,255,255,0.07)",
-              borderLeft:    "3px solid #06B6D4",
+              borderLeft:    "3px solid #84CC16",
               borderRadius:  "0 4px 4px 0",
               padding:       "0.6rem 1.4rem 0.6rem 1.2rem",
               backdropFilter: "blur(12px)",
               margin:        0,
             }}
           >
-            Projects
+            Selected Works
           </h2>
         </motion.div>
       </div>
@@ -377,24 +258,79 @@ export default function Projects() {
       {/* Card row */}
       <div
         style={{
-          padding:        "0 clamp(2rem, 8vw, 8rem)",
-          display:        "grid",
+          padding: "0 clamp(2rem, 8vw, 8rem)",
+          display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
-          gap:            "1.25rem",
+          gap: "1rem",
         }}
       >
-        {projectsData.map((project) => (
-          <ProjectCard
+        {projectsData.map((project, i) => (
+          <motion.div
             key={project.id}
-            project={project}
-            isExpanded={expandedId === project.id}
-            isCompressed={expandedId !== null && expandedId !== project.id}
-            onExpand={() => setExpandedId(project.id)}
-          />
+            layoutId={`card-${project.id}`}
+            onClick={() => setExpandedId(project.id)}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ borderColor: "rgba(232,232,232,0.25)" }}
+            style={{
+              background:   "transparent",
+              border:       "1px solid rgba(232,232,232,0.1)",
+              borderRadius: 2,
+              cursor:       "pointer",
+              overflow:     "hidden",
+            }}
+          >
+            {/* Thumbnail */}
+            {project.images[0] && (
+              <div
+                style={{
+                  position:    "relative",
+                  width:       "100%",
+                  aspectRatio: "16/9",
+                  background:  "#0e0e0e",
+                  overflow:    "hidden",
+                }}
+              >
+                <Image
+                  src={project.images[0]}
+                  alt={project.title}
+                  fill
+                  style={{ objectFit: "cover", opacity: 0.65 }}
+                  sizes="300px"
+                />
+                <div
+                  style={{
+                    position:   "absolute",
+                    inset:      0,
+                    background: "linear-gradient(to bottom, transparent 30%, rgba(10,10,10,0.85))",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Title */}
+            <div style={{ padding: "0.9rem 1.1rem 1.1rem" }}>
+              <p
+                style={{
+                  fontFamily:    "var(--font-mono), monospace",
+                  fontWeight:    600,
+                  fontSize:      "clamp(0.76rem, 1.1vw, 0.88rem)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color:         "#e8e8e8",
+                  margin:        0,
+                }}
+              >
+                {project.title}
+              </p>
+            </div>
+          </motion.div>
         ))}
       </div>
 
-      {/* Expanded overlay */}
+      {/* Expanded overlay — backdrop + centered card */}
       <AnimatePresence>
         {expanded && (
           <>
@@ -404,160 +340,166 @@ export default function Projects() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.22 }}
               onClick={close}
               style={{
                 position:   "fixed",
                 inset:      0,
-                background: "rgba(0,0,0,0.75)",
+                background: "rgba(0,0,0,0.8)",
                 zIndex:     200,
                 backdropFilter: "blur(4px)",
               }}
             />
 
-            {/* Expanded card */}
-            <motion.div
-              layoutId={`card-${expanded.id}`}
-              transition={SPRING}
+            {/* Centering shell — NOT the layoutId element */}
+            <div
               style={{
-                position:     "fixed",
-                top:          "50%",
-                left:         "50%",
-                transform:    "translate(-50%, -50%)",
-                zIndex:       201,
-                width:        "min(90vw, 900px)",
-                maxHeight:    "85vh",
-                overflowY:    "auto",
-                background:   "#0e0e0e",
-                border:       "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 10,
-                padding:      "clamp(1.5rem, 4vw, 2.5rem)",
+                position:       "fixed",
+                inset:          0,
+                zIndex:         201,
+                display:        "flex",
+                alignItems:     "center",
+                justifyContent: "center",
+                padding:        "2rem",
+                pointerEvents:  "none",
               }}
             >
-              {/* Close button */}
-              <button
-                onClick={close}
-                aria-label="Close"
+              {/* Expanded card with layoutId */}
+              <motion.div
+                layoutId={`card-${expanded.id}`}
+                transition={SPRING}
                 style={{
-                  position:    "absolute",
-                  top:         16,
-                  right:       16,
-                  background:  "rgba(255,255,255,0.05)",
-                  border:      "1px solid rgba(255,255,255,0.1)",
+                  width:        "min(100%, 860px)",
+                  maxHeight:    "85vh",
+                  overflowY:    "auto",
+                  background:   "#0e0e0e",
+                  border:       "1px solid rgba(255,255,255,0.1)",
                   borderRadius: 4,
-                  color:       "rgba(232,232,232,0.6)",
-                  width:       32,
-                  height:      32,
-                  cursor:      "pointer",
-                  fontFamily:  "var(--font-mono), monospace",
-                  fontSize:    18,
-                  display:     "flex",
-                  alignItems:  "center",
-                  justifyContent: "center",
-                  lineHeight:  1,
+                  pointerEvents: "all",
+                  position:     "relative",
                 }}
               >
-                ×
-              </button>
-
-              {/* Title */}
-              <h3
-                style={{
-                  fontFamily:    "var(--font-display), var(--font-mono), sans-serif",
-                  fontWeight:    700,
-                  fontSize:      "clamp(1.1rem, 2.5vw, 1.6rem)",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color:         "#e8e8e8",
-                  marginBottom:  "1.5rem",
-                  paddingRight:  48,
-                }}
-              >
-                {expanded.title}
-              </h3>
-
-              {/* Image slider */}
-              <div style={{ marginBottom: "1.75rem" }}>
-                <ImageSlider images={expanded.images} title={expanded.title} />
-              </div>
-
-              {/* Description */}
-              <p
-                style={{
-                  fontFamily:   "var(--font-mono), monospace",
-                  fontWeight:   300,
-                  fontSize:     "clamp(0.78rem, 1.1vw, 0.88rem)",
-                  color:        "rgba(232,232,232,0.65)",
-                  lineHeight:   1.8,
-                  marginBottom: "1.5rem",
-                }}
-              >
-                {expanded.description}
-              </p>
-
-              {/* Tags */}
-              <div
-                style={{
-                  display:      "flex",
-                  flexWrap:     "wrap",
-                  gap:          8,
-                  marginBottom: expanded.github ? "1.5rem" : 0,
-                }}
-              >
-                {expanded.tags.map((tag) => (
-                  <span
-                    key={tag}
+                {/* Inner padding wrapper */}
+                <div style={{ padding: "clamp(1.5rem, 4vw, 2.25rem)" }}>
+                  {/* Close */}
+                  <button
+                    onClick={close}
+                    aria-label="Close"
                     style={{
-                      fontFamily:    "var(--font-mono), monospace",
-                      fontSize:      "0.68rem",
-                      letterSpacing: "0.06em",
-                      color:         "rgba(6,182,212,0.8)",
-                      background:    "rgba(6,182,212,0.07)",
-                      border:        "1px solid rgba(6,182,212,0.18)",
-                      borderRadius:  4,
-                      padding:       "3px 9px",
+                      position:    "absolute",
+                      top:         14,
+                      right:       14,
+                      background:  "rgba(255,255,255,0.05)",
+                      border:      "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 3,
+                      color:       "rgba(232,232,232,0.55)",
+                      width:       30,
+                      height:      30,
+                      cursor:      "pointer",
+                      fontFamily:  "var(--font-mono), monospace",
+                      fontSize:    20,
+                      display:     "flex",
+                      alignItems:  "center",
+                      justifyContent: "center",
+                      lineHeight:  1,
                     }}
                   >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+                    ×
+                  </button>
 
-              {/* GitHub link */}
-              {expanded.github && (
-                <a
-                  href={expanded.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display:       "inline-flex",
-                    alignItems:    "center",
-                    gap:           8,
-                    fontFamily:    "var(--font-mono), monospace",
-                    fontSize:      "0.78rem",
-                    letterSpacing: "0.06em",
-                    color:         "rgba(6,182,212,0.8)",
-                    textDecoration: "none",
-                    border:        "1px solid rgba(6,182,212,0.2)",
-                    borderRadius:  5,
-                    padding:       "0.45rem 0.9rem",
-                    background:    "rgba(6,182,212,0.05)",
-                    transition:    "border-color 0.2s, color 0.2s",
-                  }}
-                >
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden
+                  {/* Title */}
+                  <h3
+                    style={{
+                      fontFamily:    "var(--font-display), var(--font-mono), sans-serif",
+                      fontWeight:    700,
+                      fontSize:      "clamp(1rem, 2.2vw, 1.45rem)",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color:         "#e8e8e8",
+                      marginBottom:  "1.5rem",
+                      paddingRight:  40,
+                    }}
                   >
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
-                  </svg>
-                  View on GitHub
-                </a>
-              )}
-            </motion.div>
+                    {expanded.title}
+                  </h3>
+
+                  {/* Slider */}
+                  <div style={{ marginBottom: "1.75rem" }}>
+                    <ImageSlider images={expanded.images} title={expanded.title} />
+                  </div>
+
+                  {/* Description */}
+                  <p
+                    style={{
+                      fontFamily:   "var(--font-mono), monospace",
+                      fontWeight:   300,
+                      fontSize:     "clamp(0.76rem, 1.05vw, 0.86rem)",
+                      color:        "rgba(232,232,232,0.6)",
+                      lineHeight:   1.85,
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    {expanded.description}
+                  </p>
+
+                  {/* Tags */}
+                  <div
+                    style={{
+                      display:      "flex",
+                      flexWrap:     "wrap",
+                      gap:          6,
+                      marginBottom: expanded.github ? "1.5rem" : 0,
+                    }}
+                  >
+                    {expanded.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        style={{
+                          fontFamily:    "var(--font-mono), monospace",
+                          fontSize:      "0.66rem",
+                          letterSpacing: "0.06em",
+                          color:         "rgba(6,182,212,0.75)",
+                          background:    "rgba(6,182,212,0.07)",
+                          border:        "1px solid rgba(6,182,212,0.16)",
+                          borderRadius:  3,
+                          padding:       "3px 8px",
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* GitHub */}
+                  {expanded.github && (
+                    <a
+                      href={expanded.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display:        "inline-flex",
+                        alignItems:     "center",
+                        gap:            8,
+                        fontFamily:     "var(--font-mono), monospace",
+                        fontSize:       "0.76rem",
+                        letterSpacing:  "0.06em",
+                        color:          "rgba(6,182,212,0.8)",
+                        textDecoration: "none",
+                        border:         "1px solid rgba(6,182,212,0.2)",
+                        borderRadius:   4,
+                        padding:        "0.42rem 0.85rem",
+                        background:     "rgba(6,182,212,0.05)",
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
+                      </svg>
+                      View on GitHub
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>
