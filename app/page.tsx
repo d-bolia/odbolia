@@ -7,6 +7,7 @@ import { Canvas } from "@react-three/fiber"
 import HeroSection from "@/components/HeroSection"
 import AboutSection from "@/components/AboutSection"
 import Projects from "@/components/Projects"
+import Timeline from "@/components/Timeline"
 import ContactSection from "@/components/ContactSection"
 import BranchPanel from "@/components/BranchPanel"
 import AboutBranch from "@/components/AboutBranch"
@@ -129,6 +130,7 @@ export default function Home() {
         branchOpen={branchOpen}
       />
       <Projects />
+      <Timeline />
       <ContactSection sectionRef={contactRef} />
 
       {/* Invisible sentinel that triggers the carousel loop */}
