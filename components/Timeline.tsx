@@ -215,14 +215,14 @@ export default function Timeline() {
         height: "calc(100dvh - 84px)",
         marginBottom: "-6rem",
         display: "flex",
-        gap: "clamp(1.5rem, 3vw, 3rem)",
+        gap: "clamp(1rem, 2vw, 2rem)",
         overflow: "hidden",
       }}
     >
       {/* ── Left panel — static straight spine ───────────────────────────── */}
       <div
         style={{
-          width: "35%",
+          width: "25%",
           flexShrink: 0,
           height: "100%",
           overflow: "hidden",
@@ -326,7 +326,7 @@ export default function Timeline() {
                   fill={isActive ? "#60a5fa" : i < activeIdx ? "#3b82f6" : "#6b7280"}
                   fontFamily="var(--font-display), var(--font-mono), sans-serif"
                   fontWeight={isActive ? 700 : 400}
-                  fontSize={9.5}
+                  fontSize={13}
                   style={{ transition: "fill 0.25s" }}
                 >
                   {NODE_SHORT[i]}
@@ -336,7 +336,7 @@ export default function Timeline() {
                   textAnchor={anchor}
                   fill="rgba(107,114,128,0.65)"
                   fontFamily="var(--font-mono), monospace"
-                  fontSize={7.5}
+                  fontSize={10}
                 >
                   {timelineData[i].dates}
                 </text>
