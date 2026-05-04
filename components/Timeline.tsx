@@ -116,27 +116,25 @@ const timelineData: TimelineEntry[] = [
 // viewBox "0 0 260 760" — single vertical spine at x=130
 // 7 nodes, y from 50 to 710, step=110
 const NODE_POS = [
-  { x: 130, y: 50  },
-  { x: 130, y: 160 },
-  { x: 130, y: 270 },
-  { x: 130, y: 380 },
-  { x: 130, y: 490 },
-  { x: 130, y: 600 },
-  { x: 130, y: 710 },
+  { x: 22, y: 50  },
+  { x: 22, y: 160 },
+  { x: 22, y: 270 },
+  { x: 22, y: 380 },
+  { x: 22, y: 490 },
+  { x: 22, y: 600 },
+  { x: 22, y: 710 },
 ]
 
 // Straight vertical segments only
 const TRACES = [
-  { d: "M 130 50 L 130 160",  len: 110 },
-  { d: "M 130 160 L 130 270", len: 110 },
-  { d: "M 130 270 L 130 380", len: 110 },
-  { d: "M 130 380 L 130 490", len: 110 },
-  { d: "M 130 490 L 130 600", len: 110 },
-  { d: "M 130 600 L 130 710", len: 110 },
+  { d: "M 22 50 L 22 160",  len: 110 },
+  { d: "M 22 160 L 22 270", len: 110 },
+  { d: "M 22 270 L 22 380", len: 110 },
+  { d: "M 22 380 L 22 490", len: 110 },
+  { d: "M 22 490 L 22 600", len: 110 },
+  { d: "M 22 600 L 22 710", len: 110 },
 ]
 
-// Alternating label sides
-const LABEL_RIGHT = [true, false, true, false, true, false, true]
 
 const NODE_SHORT = [
   "UC Irvine",
@@ -214,26 +212,27 @@ export default function Timeline() {
       style={{
         height: "calc(100dvh - 84px)",
         marginBottom: "-6rem",
+        marginRight: "calc(-1 * clamp(2rem, 8vw, 8rem))",
         display: "flex",
-        gap: "clamp(1rem, 2vw, 2rem)",
+        gap: "clamp(1.5rem, 3vw, 3rem)",
         overflow: "hidden",
       }}
     >
       {/* ── Left panel — static straight spine ───────────────────────────── */}
       <div
         style={{
-          width: "25%",
+          width: "35%",
           flexShrink: 0,
           height: "100%",
           overflow: "hidden",
         }}
       >
         <svg
-          viewBox="0 0 260 760"
+          viewBox="0 0 320 760"
           width="100%"
           height="100%"
           style={{ display: "block" }}
-          preserveAspectRatio="xMidYMid meet"
+          preserveAspectRatio="xMinYMid meet"
         >
           {/* Base spine traces — dim blue */}
           {TRACES.map((trace, i) => (
@@ -305,15 +304,19 @@ export default function Timeline() {
             )
           })}
 
-          {/* Labels */}
+          {/* Labels — all right of spine */}
           {NODE_POS.map((pos, i) => {
             const isActive = i === activeIdx
             const dist = Math.abs(i - activeIdx)
             const labelOpacity =
               dist === 0 ? 1 : dist === 1 ? 0.65 : dist === 2 ? 0.42 : 0.22
-            const goRight = LABEL_RIGHT[i]
-            const lx = goRight ? pos.x + 16 : pos.x - 16
-            const anchor = goRight ? "start" : "end"
+            const lx = pos.x + 18
+            const label = NODE_SHORT[i]
+            const words = label.split(" ")
+            const isLong = label.length > 18
+            const line1 = isLong ? words.slice(0, -1).join(" ") : label
+            const line2 = isLong ? words[words.length - 1] : ""
+            const textFill = isActive ? "#60a5fa" : i < activeIdx ? "#3b82f6" : "#6b7280"
             return (
               <g
                 key={`label-${i}`}
@@ -321,22 +324,38 @@ export default function Timeline() {
                 style={{ cursor: "pointer", opacity: labelOpacity, transition: "opacity 0.25s" }}
               >
                 <text
-                  x={lx} y={pos.y - 2}
-                  textAnchor={anchor}
-                  fill={isActive ? "#60a5fa" : i < activeIdx ? "#3b82f6" : "#6b7280"}
+                  x={lx}
+                  y={isLong ? pos.y - 14 : pos.y - 5}
+                  textAnchor="start"
+                  fill={textFill}
                   fontFamily="var(--font-display), var(--font-mono), sans-serif"
                   fontWeight={isActive ? 700 : 400}
-                  fontSize={13}
+                  fontSize={26}
                   style={{ transition: "fill 0.25s" }}
                 >
-                  {NODE_SHORT[i]}
+                  {line1}
                 </text>
+                {isLong && (
+                  <text
+                    x={lx}
+                    y={pos.y + 18}
+                    textAnchor="start"
+                    fill={textFill}
+                    fontFamily="var(--font-display), var(--font-mono), sans-serif"
+                    fontWeight={isActive ? 700 : 400}
+                    fontSize={26}
+                    style={{ transition: "fill 0.25s" }}
+                  >
+                    {line2}
+                  </text>
+                )}
                 <text
-                  x={lx} y={pos.y + 11}
-                  textAnchor={anchor}
+                  x={lx}
+                  y={isLong ? pos.y + 44 : pos.y + 22}
+                  textAnchor="start"
                   fill="rgba(107,114,128,0.65)"
                   fontFamily="var(--font-mono), monospace"
-                  fontSize={10}
+                  fontSize={17}
                 >
                   {timelineData[i].dates}
                 </text>
