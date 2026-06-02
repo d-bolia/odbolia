@@ -564,6 +564,28 @@ export default function Projects() {
                 </h3>
               </div>
 
+              {/* Dean's Award link — Photon Flight only */}
+              {project.id === 1 && (
+                <div style={{ flexShrink: 0, marginTop: "-0.3rem" }}>
+                  <a
+                    href="https://engineering.uci.edu/news/2026/3/eleven-senior-projects-win-deans-choice-awards-2026-annual-desig"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontFamily:     "var(--font-mono), monospace",
+                      fontSize:       "0.68rem",
+                      letterSpacing:  "0.08em",
+                      color:          "#f472b6",
+                      textDecoration: "none",
+                      borderBottom:   "1px solid rgba(244,114,182,0.35)",
+                      paddingBottom:  "1px",
+                    }}
+                  >
+                    Dean&apos;s Award Recipient
+                  </a>
+                </div>
+              )}
+
               {/* Carousel */}
               <div style={{ flexShrink: 0 }}>
                 <div
