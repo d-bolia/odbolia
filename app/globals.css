@@ -25,30 +25,43 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Geist Mono as the single typeface for the entire site */
   font-family: var(--font-mono), monospace;
-  font-weight: 300;
+  font-weight: 400;
   font-size: 16px;
 }
 
-/* Headings: bold weight, all-caps, wide tracking — rounded by Geist's letterforms */
+/* Section headings: Space Grotesk bold for strong visual contrast */
 h1, h2 {
-  font-family: var(--font-mono), monospace;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--font-display), var(--font-mono), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.1;
 }
 
-/* Subheadings: light weight, sentence case, moderate tracking */
 h3, h4, h5, h6 {
   font-family: var(--font-mono), monospace;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: 0.06em;
   line-height: 1.4;
 }
 
 p, li, a, span, label, button, input, textarea {
   font-family: var(--font-mono), monospace;
-  font-weight: 300;
+  font-weight: 400;
+}
+
+.timeline-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+.timeline-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.timeline-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.timeline-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
 }

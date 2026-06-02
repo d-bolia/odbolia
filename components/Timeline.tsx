@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useRef, useEffect } from "react"
 
 interface SubProject {
   organization: string
@@ -113,8 +112,6 @@ const timelineData: TimelineEntry[] = [
   },
 ]
 
-// viewBox "0 0 260 760" — single vertical spine at x=130
-// 7 nodes, y from 50 to 710, step=110
 const NODE_POS = [
   { x: 22, y: 50  },
   { x: 22, y: 160 },
@@ -125,7 +122,6 @@ const NODE_POS = [
   { x: 22, y: 710 },
 ]
 
-// Straight vertical segments only
 const TRACES = [
   { d: "M 22 50 L 22 160",  len: 110 },
   { d: "M 22 160 L 22 270", len: 110 },
@@ -134,7 +130,6 @@ const TRACES = [
   { d: "M 22 490 L 22 600", len: 110 },
   { d: "M 22 600 L 22 710", len: 110 },
 ]
-
 
 const NODE_SHORT = [
   "UC Irvine",
@@ -146,66 +141,44 @@ const NODE_SHORT = [
   "Ohio State",
 ]
 
-function ContextAccordion({ context }: { context: string }) {
-  const [open, setOpen] = useState(false)
-  const isPlaceholder = context.toLowerCase().startsWith("placeholder")
-
-  return (
-    <div style={{ borderTop: "1px dashed rgba(255,255,255,0.08)", marginTop: "1.5rem", paddingTop: "1rem" }}>
-      <button
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          cursor: "pointer",
-          background: "none",
-          border: "none",
-          padding: 0,
-          color: "#6b7280",
-          fontFamily: "var(--font-mono), monospace",
-          fontSize: "0.68rem",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-        }}
-      >
-        <span style={{ fontSize: "0.85rem", lineHeight: 1, color: "#60a5fa" }}>
-          {open ? "−" : "+"}
-        </span>
-        Personal Context
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeInOut" }}
-            style={{ overflow: "hidden" }}
-          >
-            <p
-              style={{
-                paddingTop: "0.85rem",
-                fontFamily: "var(--font-mono), monospace",
-                fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                fontStyle: "italic",
-                color: isPlaceholder ? "#F59E0B" : "rgba(232,232,232,0.5)",
-                lineHeight: 1.8,
-                margin: 0,
-              }}
-            >
-              {context}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
-
 export default function Timeline() {
   const [activeIdx, setActiveIdx] = useState(0)
-  const entry = timelineData[activeIdx]
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const entryRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  useEffect(() => {
+    const container = scrollRef.current
+    if (!container) return
+
+    const intersecting = new Set<number>()
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const idx = Number((entry.target as HTMLElement).dataset.idx)
+          if (entry.isIntersecting) {
+            intersecting.add(idx)
+          } else {
+            intersecting.delete(idx)
+          }
+        })
+        if (intersecting.size > 0) {
+          setActiveIdx(Math.min(...intersecting))
+        }
+      },
+      {
+        root: container,
+        rootMargin: "0px 0px -45% 0px",
+        threshold: 0,
+      }
+    )
+
+    entryRefs.current.forEach((el) => {
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div
@@ -218,23 +191,23 @@ export default function Timeline() {
         overflow: "hidden",
       }}
     >
-      {/* ── Left panel — static straight spine ───────────────────────────── */}
+      {/* ── Left panel — 25%, spine + nodes, scroll-driven ─────────────────── */}
       <div
         style={{
-          width: "35%",
+          width: "25%",
           flexShrink: 0,
           height: "100%",
           overflow: "hidden",
         }}
       >
         <svg
-          viewBox="0 0 320 760"
+          viewBox="0 0 280 760"
           width="100%"
           height="100%"
           style={{ display: "block" }}
           preserveAspectRatio="xMinYMid meet"
         >
-          {/* Base spine traces — dim blue */}
+          {/* Base spine */}
           {TRACES.map((trace, i) => (
             <path
               key={`base-${i}`}
@@ -247,7 +220,7 @@ export default function Timeline() {
             />
           ))}
 
-          {/* Lit traces — animate toward active node */}
+          {/* Lit traces */}
           {TRACES.map((trace, i) => (
             <path
               key={`lit-${i}`}
@@ -272,39 +245,34 @@ export default function Timeline() {
             const nodeOpacity =
               dist === 0 ? 1 : dist === 1 ? 0.65 : dist === 2 ? 0.42 : 0.22
             return (
-              <g
-                key={`node-${i}`}
-                onClick={() => setActiveIdx(i)}
-                style={{ cursor: "pointer" }}
-              >
-                <motion.circle
-                  cx={pos.x} cy={pos.y} r={18}
-                  fill="rgba(96,165,250,0.07)"
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.25 }}
-                />
-                <motion.circle
-                  cx={pos.x} cy={pos.y} r={12}
-                  fill="none"
-                  stroke="rgba(96,165,250,0.25)"
-                  strokeWidth={1}
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.25 }}
-                />
-                <motion.circle
-                  cx={pos.x} cy={pos.y}
-                  animate={{
-                    r: isActive ? 7 : 4.5,
-                    fill: isActive ? "#60a5fa" : i < activeIdx ? "#2563eb" : "#374151",
-                    opacity: nodeOpacity,
-                  }}
-                  transition={{ duration: 0.25 }}
+              <g key={`node-${i}`}>
+                {isActive && (
+                  <>
+                    <circle
+                      cx={pos.x} cy={pos.y} r={18}
+                      fill="rgba(96,165,250,0.07)"
+                    />
+                    <circle
+                      cx={pos.x} cy={pos.y} r={12}
+                      fill="none"
+                      stroke="rgba(96,165,250,0.25)"
+                      strokeWidth={1}
+                    />
+                  </>
+                )}
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={isActive ? 7 : 4.5}
+                  fill={isActive ? "#60a5fa" : i < activeIdx ? "#2563eb" : "#374151"}
+                  opacity={nodeOpacity}
+                  style={{ transition: "r 0.3s ease, fill 0.3s ease, opacity 0.3s ease" }}
                 />
               </g>
             )
           })}
 
-          {/* Labels — all right of spine */}
+          {/* Labels */}
           {NODE_POS.map((pos, i) => {
             const isActive = i === activeIdx
             const dist = Math.abs(i - activeIdx)
@@ -313,15 +281,14 @@ export default function Timeline() {
             const lx = pos.x + 18
             const label = NODE_SHORT[i]
             const words = label.split(" ")
-            const isLong = label.length > 18
-            const line1 = isLong ? words.slice(0, -1).join(" ") : label
-            const line2 = isLong ? words[words.length - 1] : ""
+            const isLong = label.length > 15
+            const line1 = isLong ? words.slice(0, Math.ceil(words.length / 2)).join(" ") : label
+            const line2 = isLong ? words.slice(Math.ceil(words.length / 2)).join(" ") : ""
             const textFill = isActive ? "#60a5fa" : i < activeIdx ? "#3b82f6" : "#6b7280"
             return (
               <g
                 key={`label-${i}`}
-                onClick={() => setActiveIdx(i)}
-                style={{ cursor: "pointer", opacity: labelOpacity, transition: "opacity 0.25s" }}
+                style={{ opacity: labelOpacity, transition: "opacity 0.3s ease" }}
               >
                 <text
                   x={lx}
@@ -331,7 +298,7 @@ export default function Timeline() {
                   fontFamily="var(--font-display), var(--font-mono), sans-serif"
                   fontWeight={isActive ? 700 : 400}
                   fontSize={26}
-                  style={{ transition: "fill 0.25s" }}
+                  style={{ transition: "fill 0.3s ease" }}
                 >
                   {line1}
                 </text>
@@ -344,7 +311,7 @@ export default function Timeline() {
                     fontFamily="var(--font-display), var(--font-mono), sans-serif"
                     fontWeight={isActive ? 700 : 400}
                     fontSize={26}
-                    style={{ transition: "fill 0.25s" }}
+                    style={{ transition: "fill 0.3s ease" }}
                   >
                     {line2}
                   </text>
@@ -365,112 +332,82 @@ export default function Timeline() {
         </svg>
       </div>
 
-      {/* ── Right panel — index card with internal scroll ─────────────────── */}
+      {/* ── Right panel — continuous scroll ───────────────────────────────── */}
       <div
+        ref={scrollRef}
+        className="timeline-scroll"
         style={{
           flex: 1,
           minWidth: 0,
           height: "100%",
-          overflow: "hidden",
-          position: "relative",
+          overflowY: "auto",
+          paddingRight: "clamp(0.5rem, 1.5vw, 1.5rem)",
         }}
       >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeIdx}
-            initial={{ opacity: 0, x: 28 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -14 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "#141414",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: 8,
-              boxShadow: "0 8px 40px rgba(0,0,0,0.5)",
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
-          >
-            {/* Fixed header */}
+        {timelineData.map((entry, i) => {
+          const isPlaceholder = entry.context?.toLowerCase().startsWith("placeholder")
+          return (
             <div
+              key={entry.id}
+              ref={(el) => { entryRefs.current[i] = el }}
+              data-idx={String(i)}
               style={{
-                padding: "clamp(1.5rem, 3vw, 2.25rem)",
-                flexShrink: 0,
-                borderBottom: "1px solid rgba(255,255,255,0.05)",
+                paddingTop: i === 0 ? "1.5rem" : "4rem",
+                paddingBottom: "4rem",
+                borderBottom:
+                  i < timelineData.length - 1
+                    ? "1px solid rgba(255,255,255,0.05)"
+                    : "none",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.1rem" }}>
-                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#60a5fa", flexShrink: 0 }} />
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontSize: "0.6rem",
-                    letterSpacing: "0.18em",
-                    textTransform: "uppercase",
-                    color: "#6b7280",
-                  }}
-                >
-                  INDEX
-                </span>
-              </div>
-
+              {/* Organization */}
               <h3
                 style={{
                   fontFamily: "var(--font-display), var(--font-mono), sans-serif",
                   fontWeight: 700,
-                  fontSize: "clamp(1rem, 2.5vw, 1.5rem)",
+                  fontSize: "clamp(1.1rem, 2.5vw, 1.55rem)",
                   color: "#60a5fa",
-                  marginBottom: "0.35rem",
+                  marginBottom: "0.3rem",
                   lineHeight: 1.2,
                 }}
               >
                 {entry.organization}
               </h3>
 
+              {/* Dates + location */}
               <p
                 style={{
                   fontFamily: "var(--font-mono), monospace",
                   fontSize: "0.7rem",
                   letterSpacing: "0.05em",
                   color: "#6b7280",
-                  margin: "0 0 0.7rem",
+                  margin: "0 0 0.55rem",
                 }}
               >
                 {entry.dates} · {entry.location}
               </p>
 
+              {/* Role */}
               <p
                 style={{
                   fontFamily: "var(--font-mono), monospace",
                   fontWeight: 500,
-                  fontSize: "clamp(0.76rem, 1.1vw, 0.88rem)",
+                  fontSize: "clamp(0.78rem, 1.1vw, 0.9rem)",
                   color: "#ffffff",
                   lineHeight: 1.5,
-                  margin: 0,
+                  margin: "0 0 1rem",
                 }}
               >
                 {entry.role}
               </p>
-            </div>
 
-            {/* Scrollable body */}
-            <div
-              style={{
-                flex: 1,
-                minHeight: 0,
-                overflowY: "auto",
-                padding: "clamp(1.25rem, 2.5vw, 2rem) clamp(1.5rem, 3vw, 2.25rem)",
-              }}
-            >
+              {/* Description */}
               <p
                 style={{
                   fontFamily: "var(--font-mono), monospace",
                   fontWeight: 300,
                   fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                  color: "rgba(255,255,255,0.65)",
+                  color: "rgba(255,255,255,0.8)",
                   lineHeight: 1.85,
                   margin: 0,
                 }}
@@ -478,78 +415,124 @@ export default function Timeline() {
                 {entry.description}
               </p>
 
-              {entry.context && <ContextAccordion context={entry.context} />}
-
-              {/* Sub-project (e.g. Photon Flight nested under UCI) */}
-              {entry.subProject && (
-                <div
+              {/* Context — always visible, no toggle */}
+              {entry.context && (
+                <p
                   style={{
-                    marginTop: "2rem",
-                    paddingTop: "1.5rem",
-                    borderTop: "1px solid rgba(255,255,255,0.06)",
+                    fontFamily: "var(--font-mono), monospace",
+                    fontWeight: 300,
+                    fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
+                    fontStyle: "italic",
+                    color: isPlaceholder ? "#F59E0B" : "#a3a3a3",
+                    lineHeight: 1.85,
+                    margin: "0.75rem 0 0",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                    <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e", flexShrink: 0 }} />
-                    <span
+                  {entry.context}
+                </p>
+              )}
+
+              {/* Sub-project (Photon Flight nested under UCI) */}
+              {entry.subProject && (() => {
+                const sub = entry.subProject!
+                const subIsPlaceholder = sub.context?.toLowerCase().startsWith("placeholder")
+                return (
+                  <div
+                    style={{
+                      marginTop: "2.5rem",
+                      paddingTop: "1.5rem",
+                      borderTop: "1px solid rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <div
                       style={{
-                        fontFamily: "var(--font-mono), monospace",
-                        fontSize: "0.6rem",
-                        letterSpacing: "0.18em",
-                        textTransform: "uppercase",
-                        color: "#6b7280",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        marginBottom: "0.75rem",
                       }}
                     >
-                      Capstone Project
-                    </span>
+                      <div
+                        style={{
+                          width: 5,
+                          height: 5,
+                          borderRadius: "50%",
+                          background: "#22c55e",
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontFamily: "var(--font-mono), monospace",
+                          fontSize: "0.6rem",
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
+                          color: "#6b7280",
+                        }}
+                      >
+                        Capstone Project
+                      </span>
+                    </div>
+
+                    <h4
+                      style={{
+                        fontFamily: "var(--font-display), var(--font-mono), sans-serif",
+                        fontWeight: 700,
+                        fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
+                        color: "#22c55e",
+                        marginBottom: "0.3rem",
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {sub.organization}
+                    </h4>
+
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono), monospace",
+                        fontSize: "0.7rem",
+                        color: "#6b7280",
+                        margin: "0 0 0.85rem",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {sub.role}
+                    </p>
+
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono), monospace",
+                        fontWeight: 300,
+                        fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
+                        color: "rgba(255,255,255,0.8)",
+                        lineHeight: 1.85,
+                        margin: 0,
+                      }}
+                    >
+                      {sub.description}
+                    </p>
+
+                    {sub.context && (
+                      <p
+                        style={{
+                          fontFamily: "var(--font-mono), monospace",
+                          fontWeight: 300,
+                          fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
+                          fontStyle: "italic",
+                          color: subIsPlaceholder ? "#F59E0B" : "#a3a3a3",
+                          lineHeight: 1.85,
+                          margin: "0.75rem 0 0",
+                        }}
+                      >
+                        {sub.context}
+                      </p>
+                    )}
                   </div>
-
-                  <h4
-                    style={{
-                      fontFamily: "var(--font-display), var(--font-mono), sans-serif",
-                      fontWeight: 700,
-                      fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
-                      color: "#22c55e",
-                      marginBottom: "0.3rem",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {entry.subProject.organization}
-                  </h4>
-
-                  <p
-                    style={{
-                      fontFamily: "var(--font-mono), monospace",
-                      fontSize: "0.7rem",
-                      color: "#6b7280",
-                      margin: "0 0 0.85rem",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {entry.subProject.role}
-                  </p>
-
-                  <p
-                    style={{
-                      fontFamily: "var(--font-mono), monospace",
-                      fontWeight: 300,
-                      fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                      color: "rgba(255,255,255,0.65)",
-                      lineHeight: 1.85,
-                      margin: 0,
-                    }}
-                  >
-                    {entry.subProject.description}
-                  </p>
-
-                  {entry.subProject.context && (
-                    <ContextAccordion context={entry.subProject.context} />
-                  )}
-                </div>
-              )}
+                )
+              })()}
             </div>
-          </motion.div>
-        </AnimatePresence>
+          )
+        })}
       </div>
     </div>
   )
