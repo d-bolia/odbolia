@@ -571,7 +571,7 @@ export default function Projects() {
                     position:     "relative",
                     width:        "100%",
                     aspectRatio:  "16/9",
-                    maxHeight:    "48vh",
+                    maxHeight:    "35vh",
                     background:   "transparent",
                     borderRadius: 16,
                     overflow:     "hidden",
@@ -654,8 +654,7 @@ export default function Projects() {
                   color:      "#ffffff",
                   lineHeight: 1.82,
                   margin:     0,
-                  flex:       1,
-                  overflow:   "hidden",
+                  flexShrink: 0,
                 }}
               >
                 {project.description}
