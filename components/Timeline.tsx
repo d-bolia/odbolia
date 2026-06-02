@@ -338,7 +338,6 @@ export default function Timeline() {
         }}
       >
         {timelineData.map((entry, i) => {
-          const isRight = i % 2 === 0  // entries 1,3,5,7 → right half
           const isPlaceholder = entry.context?.toLowerCase().startsWith("placeholder")
           return (
             <div
@@ -350,189 +349,181 @@ export default function Timeline() {
                 flexShrink: 0,
                 scrollSnapAlign: "start",
                 overflowY: "auto",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: isRight ? "flex-end" : "flex-start",
                 paddingTop: "2.5rem",
                 paddingBottom: "2rem",
+                paddingRight: "clamp(0.5rem, 1.5vw, 1.5rem)",
               }}
             >
-              {/* Content block — 50% wide, text centered */}
-              <div style={{ width: "50%", textAlign: "center" }}>
+              {/* Organization */}
+              <h3
+                style={{
+                  fontFamily: "var(--font-display), var(--font-mono), sans-serif",
+                  fontWeight: 700,
+                  fontSize: "clamp(1.1rem, 2.5vw, 1.55rem)",
+                  color: "#60a5fa",
+                  marginBottom: "0.3rem",
+                  lineHeight: 1.2,
+                }}
+              >
+                {entry.organization}
+              </h3>
 
-                {/* Organization */}
-                <h3
-                  style={{
-                    fontFamily: "var(--font-display), var(--font-mono), sans-serif",
-                    fontWeight: 700,
-                    fontSize: "clamp(1.1rem, 2.5vw, 1.55rem)",
-                    color: "#60a5fa",
-                    marginBottom: "0.3rem",
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {entry.organization}
-                </h3>
+              {/* Dates + location */}
+              <p
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: "0.7rem",
+                  letterSpacing: "0.05em",
+                  color: "#6b7280",
+                  margin: "0 0 0.55rem",
+                }}
+              >
+                {entry.dates} · {entry.location}
+              </p>
 
-                {/* Dates + location */}
-                <p
-                  style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontSize: "0.7rem",
-                    letterSpacing: "0.05em",
-                    color: "#6b7280",
-                    margin: "0 0 0.55rem",
-                  }}
-                >
-                  {entry.dates} · {entry.location}
-                </p>
+              {/* Role */}
+              <p
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontWeight: 500,
+                  fontSize: "clamp(0.78rem, 1.1vw, 0.9rem)",
+                  color: "#ffffff",
+                  lineHeight: 1.5,
+                  margin: "0 0 1rem",
+                }}
+              >
+                {entry.role}
+              </p>
 
-                {/* Role */}
-                <p
-                  style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontWeight: 500,
-                    fontSize: "clamp(0.78rem, 1.1vw, 0.9rem)",
-                    color: "#ffffff",
-                    lineHeight: 1.5,
-                    margin: "0 0 1rem",
-                  }}
-                >
-                  {entry.role}
-                </p>
+              {/* Description */}
+              <p
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontWeight: 300,
+                  fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
+                  color: "rgba(255,255,255,0.8)",
+                  lineHeight: 1.85,
+                  margin: 0,
+                }}
+              >
+                {entry.description}
+              </p>
 
-                {/* Description */}
+              {/* Context — always visible, no toggle */}
+              {entry.context && (
                 <p
                   style={{
                     fontFamily: "var(--font-mono), monospace",
                     fontWeight: 300,
                     fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                    color: "rgba(255,255,255,0.8)",
+                    fontStyle: "italic",
+                    color: isPlaceholder ? "#F59E0B" : "#a3a3a3",
                     lineHeight: 1.85,
-                    margin: 0,
+                    margin: "0.75rem 0 0",
                   }}
                 >
-                  {entry.description}
+                  {entry.context}
                 </p>
+              )}
 
-                {/* Context — always visible, no toggle */}
-                {entry.context && (
-                  <p
+              {/* Sub-project (Photon Flight nested under UCI) */}
+              {entry.subProject && (() => {
+                const sub = entry.subProject!
+                const subIsPlaceholder = sub.context?.toLowerCase().startsWith("placeholder")
+                return (
+                  <div
                     style={{
-                      fontFamily: "var(--font-mono), monospace",
-                      fontWeight: 300,
-                      fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                      fontStyle: "italic",
-                      color: isPlaceholder ? "#F59E0B" : "#a3a3a3",
-                      lineHeight: 1.85,
-                      margin: "0.75rem 0 0",
+                      marginTop: "2.5rem",
+                      paddingTop: "1.5rem",
+                      borderTop: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
-                    {entry.context}
-                  </p>
-                )}
-
-                {/* Sub-project (Photon Flight nested under UCI) */}
-                {entry.subProject && (() => {
-                  const sub = entry.subProject!
-                  const subIsPlaceholder = sub.context?.toLowerCase().startsWith("placeholder")
-                  return (
                     <div
                       style={{
-                        marginTop: "2.5rem",
-                        paddingTop: "1.5rem",
-                        borderTop: "1px solid rgba(255,255,255,0.06)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        marginBottom: "0.75rem",
                       }}
                     >
                       <div
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "0.5rem",
-                          marginBottom: "0.75rem",
+                          width: 5,
+                          height: 5,
+                          borderRadius: "50%",
+                          background: "#22c55e",
+                          flexShrink: 0,
                         }}
-                      >
-                        <div
-                          style={{
-                            width: 5,
-                            height: 5,
-                            borderRadius: "50%",
-                            background: "#22c55e",
-                            flexShrink: 0,
-                          }}
-                        />
-                        <span
-                          style={{
-                            fontFamily: "var(--font-mono), monospace",
-                            fontSize: "0.6rem",
-                            letterSpacing: "0.18em",
-                            textTransform: "uppercase",
-                            color: "#6b7280",
-                          }}
-                        >
-                          Capstone Project
-                        </span>
-                      </div>
-
-                      <h4
-                        style={{
-                          fontFamily: "var(--font-display), var(--font-mono), sans-serif",
-                          fontWeight: 700,
-                          fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
-                          color: "#22c55e",
-                          marginBottom: "0.3rem",
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {sub.organization}
-                      </h4>
-
-                      <p
+                      />
+                      <span
                         style={{
                           fontFamily: "var(--font-mono), monospace",
-                          fontSize: "0.7rem",
+                          fontSize: "0.6rem",
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
                           color: "#6b7280",
-                          margin: "0 0 0.85rem",
-                          lineHeight: 1.5,
                         }}
                       >
-                        {sub.role}
-                      </p>
+                        Capstone Project
+                      </span>
+                    </div>
 
+                    <h4
+                      style={{
+                        fontFamily: "var(--font-display), var(--font-mono), sans-serif",
+                        fontWeight: 700,
+                        fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
+                        color: "#22c55e",
+                        marginBottom: "0.3rem",
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {sub.organization}
+                    </h4>
+
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono), monospace",
+                        fontSize: "0.7rem",
+                        color: "#6b7280",
+                        margin: "0 0 0.85rem",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {sub.role}
+                    </p>
+
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono), monospace",
+                        fontWeight: 300,
+                        fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
+                        color: "rgba(255,255,255,0.8)",
+                        lineHeight: 1.85,
+                        margin: 0,
+                      }}
+                    >
+                      {sub.description}
+                    </p>
+
+                    {sub.context && (
                       <p
                         style={{
                           fontFamily: "var(--font-mono), monospace",
                           fontWeight: 300,
                           fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                          color: "rgba(255,255,255,0.8)",
+                          fontStyle: "italic",
+                          color: subIsPlaceholder ? "#F59E0B" : "#a3a3a3",
                           lineHeight: 1.85,
-                          margin: 0,
+                          margin: "0.75rem 0 0",
                         }}
                       >
-                        {sub.description}
+                        {sub.context}
                       </p>
-
-                      {sub.context && (
-                        <p
-                          style={{
-                            fontFamily: "var(--font-mono), monospace",
-                            fontWeight: 300,
-                            fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                            fontStyle: "italic",
-                            color: subIsPlaceholder ? "#F59E0B" : "#a3a3a3",
-                            lineHeight: 1.85,
-                            margin: "0.75rem 0 0",
-                          }}
-                        >
-                          {sub.context}
-                        </p>
-                      )}
-                    </div>
-                  )
-                })()}
-
-              </div>
+                    )}
+                  </div>
+                )
+              })()}
             </div>
           )
         })}
