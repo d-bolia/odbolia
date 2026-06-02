@@ -112,23 +112,24 @@ const timelineData: TimelineEntry[] = [
   },
 ]
 
+// All nodes sit on the center spine (x=140 = half of 280 viewBox)
 const NODE_POS = [
-  { x: 22, y: 50  },
-  { x: 22, y: 160 },
-  { x: 22, y: 270 },
-  { x: 22, y: 380 },
-  { x: 22, y: 490 },
-  { x: 22, y: 600 },
-  { x: 22, y: 710 },
+  { x: 140, y: 50  },
+  { x: 140, y: 160 },
+  { x: 140, y: 270 },
+  { x: 140, y: 380 },
+  { x: 140, y: 490 },
+  { x: 140, y: 600 },
+  { x: 140, y: 710 },
 ]
 
 const TRACES = [
-  { d: "M 22 50 L 22 160",  len: 110 },
-  { d: "M 22 160 L 22 270", len: 110 },
-  { d: "M 22 270 L 22 380", len: 110 },
-  { d: "M 22 380 L 22 490", len: 110 },
-  { d: "M 22 490 L 22 600", len: 110 },
-  { d: "M 22 600 L 22 710", len: 110 },
+  { d: "M 140 50 L 140 160",  len: 110 },
+  { d: "M 140 160 L 140 270", len: 110 },
+  { d: "M 140 270 L 140 380", len: 110 },
+  { d: "M 140 380 L 140 490", len: 110 },
+  { d: "M 140 490 L 140 600", len: 110 },
+  { d: "M 140 600 L 140 710", len: 110 },
 ]
 
 const NODE_SHORT = [
@@ -183,21 +184,21 @@ export default function Timeline() {
         overflow: "hidden",
       }}
     >
-      {/* ── Left panel — 25%, spine + nodes, scroll-driven ─────────────────── */}
+      {/* ── Left panel — 25%, center spine, alternating labels ───────────── */}
       <div
         style={{
           width: "25%",
           flexShrink: 0,
           height: "100%",
-          overflow: "hidden",
+          overflow: "visible",
         }}
       >
         <svg
           viewBox="0 0 280 760"
           width="100%"
           height="100%"
-          style={{ display: "block" }}
-          preserveAspectRatio="xMinYMid meet"
+          style={{ display: "block", overflow: "visible" }}
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Base spine */}
           {TRACES.map((trace, i) => (
@@ -264,13 +265,16 @@ export default function Timeline() {
             )
           })}
 
-          {/* Labels */}
+          {/* Labels — alternating sides of center spine */}
           {NODE_POS.map((pos, i) => {
             const isActive = i === activeIdx
             const dist = Math.abs(i - activeIdx)
             const labelOpacity =
               dist === 0 ? 1 : dist === 1 ? 0.65 : dist === 2 ? 0.42 : 0.22
-            const lx = pos.x + 18
+            // odd entries (1,3,5,7) → right; even (2,4,6,8) → left
+            const isRight = i % 2 === 0
+            // anchor at midpoint of each half so text stays centered within its side
+            const lx = isRight ? 210 : 70
             const label = NODE_SHORT[i]
             const words = label.split(" ")
             const isLong = label.length > 15
@@ -285,11 +289,11 @@ export default function Timeline() {
                 <text
                   x={lx}
                   y={isLong ? pos.y - 14 : pos.y - 5}
-                  textAnchor="start"
+                  textAnchor="middle"
                   fill={textFill}
                   fontFamily="var(--font-display), var(--font-mono), sans-serif"
                   fontWeight={isActive ? 700 : 400}
-                  fontSize={26}
+                  fontSize={22}
                   style={{ transition: "fill 0.3s ease" }}
                 >
                   {line1}
@@ -298,11 +302,11 @@ export default function Timeline() {
                   <text
                     x={lx}
                     y={pos.y + 18}
-                    textAnchor="start"
+                    textAnchor="middle"
                     fill={textFill}
                     fontFamily="var(--font-display), var(--font-mono), sans-serif"
                     fontWeight={isActive ? 700 : 400}
-                    fontSize={26}
+                    fontSize={22}
                     style={{ transition: "fill 0.3s ease" }}
                   >
                     {line2}
@@ -311,10 +315,10 @@ export default function Timeline() {
                 <text
                   x={lx}
                   y={isLong ? pos.y + 44 : pos.y + 22}
-                  textAnchor="start"
+                  textAnchor="middle"
                   fill="rgba(107,114,128,0.65)"
                   fontFamily="var(--font-mono), monospace"
-                  fontSize={17}
+                  fontSize={14}
                 >
                   {timelineData[i].dates}
                 </text>
