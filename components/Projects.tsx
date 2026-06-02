@@ -251,6 +251,50 @@ const CHROMA_CSS = `@keyframes chroma-ab {
   100% { text-shadow: none; }
 }`
 
+// ── Arrow button ──────────────────────────────────────────────────────────────
+
+function ArrowBtn({
+  dir,
+  disabled,
+  onClick,
+}: {
+  dir: "left" | "right"
+  disabled: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={dir === "left" ? "Previous image" : "Next image"}
+      style={{
+        position:       "absolute",
+        [dir]:          10,
+        top:            "50%",
+        transform:      "translateY(-50%)",
+        zIndex:         10,
+        background:     "rgba(10,10,10,0.7)",
+        border:         "1px solid rgba(255,255,255,0.1)",
+        borderRadius:   6,
+        color:          "rgba(232,232,232,0.85)",
+        width:          32,
+        height:         32,
+        display:        "flex",
+        alignItems:     "center",
+        justifyContent: "center",
+        cursor:         "pointer",
+        fontSize:       20,
+        lineHeight:     1,
+        padding:        0,
+        opacity:        disabled ? 0 : 1,
+        pointerEvents:  disabled ? "none" : "auto",
+        transition:     "opacity 0.2s ease",
+      }}
+    >
+      {dir === "left" ? "‹" : "›"}
+    </button>
+  )
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function Projects() {
@@ -274,50 +318,63 @@ export default function Projects() {
     return () => { document.head.removeChild(style) }
   }, [])
 
-  // Wheel handler on section — capture phase so it fires before any child scroll
+  // Scroll trap — window-level, only active when section fills the viewport.
+  // Scroll advances/retreats between projects; never advances the image carousel.
+  // When on the last project, scroll down exits naturally to the next section.
   useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-
     const handler = (e: WheelEvent) => {
+      const el = sectionRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      if (rect.top > 50 || rect.bottom < window.innerHeight - 50) return
       if (cooldownRef.current) return
-      const { activeIdx: aIdx, imageIdx: iIdx } = stateRef.current
-      const imgs = projectsData[aIdx].images
+
+      const { activeIdx: aIdx } = stateRef.current
       const isDown = e.deltaY > 0
 
-      if (isDown) {
-        if (iIdx < imgs.length - 1) {
-          e.preventDefault()
-          setImageIdx((i) => i + 1)
-          cooldownRef.current = true
-          setTimeout(() => { cooldownRef.current = false }, 440)
-        } else if (aIdx < projectsData.length - 1) {
-          e.preventDefault()
-          setDirection(1)
-          setActiveIdx((i) => i + 1)
-          setGlitchKey((k) => k + 1)
-          cooldownRef.current = true
-          setTimeout(() => { cooldownRef.current = false }, 660)
-        }
-      } else {
-        if (iIdx > 0) {
-          e.preventDefault()
-          setImageIdx((i) => i - 1)
-          cooldownRef.current = true
-          setTimeout(() => { cooldownRef.current = false }, 440)
-        } else if (aIdx > 0) {
-          e.preventDefault()
-          setDirection(-1)
-          setActiveIdx((i) => i - 1)
-          setGlitchKey((k) => k + 1)
-          cooldownRef.current = true
-          setTimeout(() => { cooldownRef.current = false }, 660)
-        }
+      if (isDown && aIdx < projectsData.length - 1) {
+        e.preventDefault()
+        setDirection(1)
+        setActiveIdx((i) => i + 1)
+        setGlitchKey((k) => k + 1)
+        cooldownRef.current = true
+        setTimeout(() => { cooldownRef.current = false }, 660)
+      } else if (!isDown && aIdx > 0) {
+        e.preventDefault()
+        setDirection(-1)
+        setActiveIdx((i) => i - 1)
+        setGlitchKey((k) => k + 1)
+        cooldownRef.current = true
+        setTimeout(() => { cooldownRef.current = false }, 660)
       }
+      // At first project scrolling up, or last project scrolling down: no preventDefault → page scrolls
     }
 
-    el.addEventListener("wheel", handler, { passive: false, capture: true })
-    return () => el.removeEventListener("wheel", handler, { capture: true } as EventListenerOptions)
+    window.addEventListener("wheel", handler, { passive: false })
+    return () => window.removeEventListener("wheel", handler)
+  }, [])
+
+  // Keyboard arrow keys advance the carousel when the section is active
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return
+      const el = sectionRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      if (rect.top > 50 || rect.bottom < window.innerHeight - 50) return
+
+      const { activeIdx: aIdx, imageIdx: iIdx } = stateRef.current
+      const imgs = projectsData[aIdx].images
+      if (imgs.length <= 1) return
+
+      if (e.key === "ArrowRight" && iIdx < imgs.length - 1) {
+        setImageIdx((i) => i + 1)
+      } else if (e.key === "ArrowLeft" && iIdx > 0) {
+        setImageIdx((i) => i - 1)
+      }
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
   }, [])
 
   const project = projectsData[activeIdx]
@@ -514,8 +571,8 @@ export default function Projects() {
                     position:     "relative",
                     width:        "100%",
                     aspectRatio:  "16/9",
-                    maxHeight:    "40vh",
-                    background:   "#111",
+                    maxHeight:    "48vh",
+                    background:   "transparent",
                     borderRadius: 16,
                     overflow:     "hidden",
                     border:       "1px solid rgba(255,255,255,0.06)",
@@ -539,16 +596,32 @@ export default function Projects() {
                       />
                     </motion.div>
                   </AnimatePresence>
+
+                  {/* Prev / next arrow buttons */}
+                  {project.images.length > 1 && (
+                    <>
+                      <ArrowBtn
+                        dir="left"
+                        disabled={imageIdx === 0}
+                        onClick={() => setImageIdx((i) => i - 1)}
+                      />
+                      <ArrowBtn
+                        dir="right"
+                        disabled={imageIdx === project.images.length - 1}
+                        onClick={() => setImageIdx((i) => i + 1)}
+                      />
+                    </>
+                  )}
                 </div>
 
                 {/* Dot indicators */}
                 {project.images.length > 1 && (
                   <div
                     style={{
-                      display:         "flex",
-                      justifyContent:  "center",
-                      gap:             6,
-                      marginTop:       "0.55rem",
+                      display:        "flex",
+                      justifyContent: "center",
+                      gap:            6,
+                      marginTop:      "0.55rem",
                     }}
                   >
                     {project.images.map((_, i) => (
@@ -594,14 +667,14 @@ export default function Projects() {
                   <span
                     key={tag}
                     style={{
-                      fontFamily:  "var(--font-mono), monospace",
-                      fontSize:    "0.6rem",
+                      fontFamily:   "var(--font-mono), monospace",
+                      fontSize:     "0.6rem",
                       letterSpacing: "0.05em",
-                      color:       "#c084fc",
-                      background:  "rgba(192,132,252,0.07)",
-                      border:      "1px solid rgba(192,132,252,0.18)",
+                      color:        "#c084fc",
+                      background:   "rgba(192,132,252,0.07)",
+                      border:       "1px solid rgba(192,132,252,0.18)",
                       borderRadius: 100,
-                      padding:     "2px 9px",
+                      padding:      "2px 9px",
                     }}
                   >
                     {tag}
@@ -617,18 +690,18 @@ export default function Projects() {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      display:     "inline-flex",
-                      alignItems:  "center",
-                      gap:         7,
-                      fontFamily:  "var(--font-mono), monospace",
-                      fontSize:    "0.72rem",
-                      letterSpacing: "0.06em",
-                      color:       "#c084fc",
+                      display:        "inline-flex",
+                      alignItems:     "center",
+                      gap:            7,
+                      fontFamily:     "var(--font-mono), monospace",
+                      fontSize:       "0.72rem",
+                      letterSpacing:  "0.06em",
+                      color:          "#c084fc",
                       textDecoration: "none",
-                      border:      "1px solid rgba(192,132,252,0.2)",
-                      borderRadius: 4,
-                      padding:     "0.36rem 0.8rem",
-                      background:  "rgba(192,132,252,0.06)",
+                      border:         "1px solid rgba(192,132,252,0.2)",
+                      borderRadius:   4,
+                      padding:        "0.36rem 0.8rem",
+                      background:     "rgba(192,132,252,0.06)",
                     }}
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
