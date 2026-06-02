@@ -150,26 +150,18 @@ export default function Timeline() {
     const container = scrollRef.current
     if (!container) return
 
-    const intersecting = new Set<number>()
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const idx = Number((entry.target as HTMLElement).dataset.idx)
           if (entry.isIntersecting) {
-            intersecting.add(idx)
-          } else {
-            intersecting.delete(idx)
+            const idx = Number((entry.target as HTMLElement).dataset.idx)
+            setActiveIdx(idx)
           }
         })
-        if (intersecting.size > 0) {
-          setActiveIdx(Math.min(...intersecting))
-        }
       },
       {
         root: container,
-        rootMargin: "0px 0px -45% 0px",
-        threshold: 0,
+        threshold: 0.6,
       }
     )
 
@@ -332,16 +324,17 @@ export default function Timeline() {
         </svg>
       </div>
 
-      {/* ── Right panel — continuous scroll ───────────────────────────────── */}
+      {/* ── Right panel — full-height snap sections ──────────────────────── */}
       <div
         ref={scrollRef}
-        className="timeline-scroll"
+        className="timeline-snap"
         style={{
           flex: 1,
           minWidth: 0,
           height: "100%",
-          overflowY: "auto",
-          paddingRight: "clamp(0.5rem, 1.5vw, 1.5rem)",
+          overflowY: "scroll",
+          scrollSnapType: "y mandatory",
+          scrollBehavior: "smooth",
         }}
       >
         {timelineData.map((entry, i) => {
@@ -352,12 +345,13 @@ export default function Timeline() {
               ref={(el) => { entryRefs.current[i] = el }}
               data-idx={String(i)}
               style={{
-                paddingTop: i === 0 ? "1.5rem" : "4rem",
-                paddingBottom: "4rem",
-                borderBottom:
-                  i < timelineData.length - 1
-                    ? "1px solid rgba(255,255,255,0.05)"
-                    : "none",
+                height: "100%",
+                flexShrink: 0,
+                scrollSnapAlign: "start",
+                overflowY: "auto",
+                paddingTop: "2.5rem",
+                paddingBottom: "2rem",
+                paddingRight: "clamp(0.5rem, 1.5vw, 1.5rem)",
               }}
             >
               {/* Organization */}
