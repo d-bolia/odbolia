@@ -338,20 +338,19 @@ export default function Timeline() {
         }}
       >
         {timelineData.map((entry, i) => {
+          const isRight = i % 2 === 0  // 1-indexed entries 1,3,5,7 → right half
           const isPlaceholder = entry.context?.toLowerCase().startsWith("placeholder")
-          return (
+
+          const contentBlock = (
             <div
-              key={entry.id}
-              ref={(el) => { entryRefs.current[i] = el }}
-              data-idx={String(i)}
               style={{
-                height: "100%",
-                flexShrink: 0,
-                scrollSnapAlign: "start",
-                overflowY: "auto",
+                flex: 1,
+                minWidth: 0,
                 paddingTop: "2.5rem",
                 paddingBottom: "2rem",
-                paddingRight: "clamp(0.5rem, 1.5vw, 1.5rem)",
+                paddingLeft: isRight ? "2rem" : "1rem",
+                paddingRight: isRight ? "1rem" : "2rem",
+                textAlign: "center",
               }}
             >
               {/* Organization */}
@@ -442,6 +441,7 @@ export default function Timeline() {
                       style={{
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "center",
                         gap: "0.5rem",
                         marginBottom: "0.75rem",
                       }}
@@ -524,6 +524,67 @@ export default function Timeline() {
                   </div>
                 )
               })()}
+            </div>
+          )
+
+          return (
+            <div
+              key={entry.id}
+              ref={(el) => { entryRefs.current[i] = el }}
+              data-idx={String(i)}
+              style={{
+                height: "100%",
+                flexShrink: 0,
+                scrollSnapAlign: "start",
+                overflowY: "auto",
+                display: "flex",
+                alignItems: "flex-start",
+                position: "relative",
+              }}
+            >
+              {/* Vertical center line */}
+              <div
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: 0,
+                  bottom: 0,
+                  width: 1,
+                  background: "rgba(96,165,250,0.15)",
+                  transform: "translateX(-0.5px)",
+                  pointerEvents: "none",
+                }}
+              />
+
+              {/* Connector dot on center line */}
+              <div
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: "3rem",
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: "#60a5fa",
+                  transform: "translateX(-50%)",
+                  zIndex: 2,
+                  boxShadow: "0 0 10px rgba(96,165,250,0.45)",
+                }}
+              />
+
+              {isRight ? (
+                <>
+                  {/* Empty left half */}
+                  <div style={{ width: "50%", flexShrink: 0 }} />
+                  {contentBlock}
+                </>
+              ) : (
+                <>
+                  {contentBlock}
+                  {/* Empty right half */}
+                  <div style={{ width: "50%", flexShrink: 0 }} />
+                </>
+              )}
             </div>
           )
         })}
