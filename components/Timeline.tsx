@@ -181,17 +181,17 @@ export default function Timeline() {
         marginRight: "calc(-1 * clamp(2rem, 8vw, 8rem))",
         display: "flex",
         gap: "clamp(1.5rem, 3vw, 3rem)",
-        overflow: "hidden",
+        overflow: "visible",
       }}
     >
       {/* ── Left panel — 25%, center spine, alternating labels ───────────── */}
       <div
         style={{
-          width: "25%",
+          width: "30%",
           flexShrink: 0,
           height: "100%",
           overflow: "visible",
-          paddingLeft: "16px",
+          paddingLeft: "24px",
         }}
       >
         <svg
