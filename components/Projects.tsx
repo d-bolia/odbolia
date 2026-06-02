@@ -568,7 +568,7 @@ export default function Projects() {
               {project.id === 1 && (
                 <div style={{ flexShrink: 0, marginTop: "-0.3rem" }}>
                   <a
-                    href="https://engineering.uci.edu/news/2026/3/eleven-senior-projects-win-deans-choice-awards-2026-annual-desig"
+                    href="https://engineering.uci.edu/news/2026/3/eleven-senior-projects-win-deans-choice-awards-2026-annual-design-review"
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
