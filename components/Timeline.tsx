@@ -112,24 +112,24 @@ const timelineData: TimelineEntry[] = [
   },
 ]
 
-// All nodes sit on the center spine (x=140 = half of 280 viewBox)
+// Spine sits at x=95 (~34% of 280 viewBox) — biased left to give more room for right labels
 const NODE_POS = [
-  { x: 140, y: 50  },
-  { x: 140, y: 160 },
-  { x: 140, y: 270 },
-  { x: 140, y: 380 },
-  { x: 140, y: 490 },
-  { x: 140, y: 600 },
-  { x: 140, y: 710 },
+  { x: 95, y: 50  },
+  { x: 95, y: 160 },
+  { x: 95, y: 270 },
+  { x: 95, y: 380 },
+  { x: 95, y: 490 },
+  { x: 95, y: 600 },
+  { x: 95, y: 710 },
 ]
 
 const TRACES = [
-  { d: "M 140 50 L 140 160",  len: 110 },
-  { d: "M 140 160 L 140 270", len: 110 },
-  { d: "M 140 270 L 140 380", len: 110 },
-  { d: "M 140 380 L 140 490", len: 110 },
-  { d: "M 140 490 L 140 600", len: 110 },
-  { d: "M 140 600 L 140 710", len: 110 },
+  { d: "M 95 50 L 95 160",  len: 110 },
+  { d: "M 95 160 L 95 270", len: 110 },
+  { d: "M 95 270 L 95 380", len: 110 },
+  { d: "M 95 380 L 95 490", len: 110 },
+  { d: "M 95 490 L 95 600", len: 110 },
+  { d: "M 95 600 L 95 710", len: 110 },
 ]
 
 const NODE_SHORT = [
@@ -191,6 +191,7 @@ export default function Timeline() {
           flexShrink: 0,
           height: "100%",
           overflow: "visible",
+          paddingLeft: "16px",
         }}
       >
         <svg
@@ -198,7 +199,7 @@ export default function Timeline() {
           width="100%"
           height="100%"
           style={{ display: "block", overflow: "visible" }}
-          preserveAspectRatio="xMidYMid meet"
+          preserveAspectRatio="xMinYMid meet"
         >
           {/* Base spine */}
           {TRACES.map((trace, i) => (
@@ -265,16 +266,17 @@ export default function Timeline() {
             )
           })}
 
-          {/* Labels — alternating sides of center spine */}
+          {/* Labels — alternating sides of spine, never crossing it */}
           {NODE_POS.map((pos, i) => {
             const isActive = i === activeIdx
             const dist = Math.abs(i - activeIdx)
             const labelOpacity =
               dist === 0 ? 1 : dist === 1 ? 0.65 : dist === 2 ? 0.42 : 0.22
-            // odd entries (1,3,5,7) → right; even (2,4,6,8) → left
+            // even indices (0,2,4,6) → right of spine; odd (1,3,5) → left of spine
             const isRight = i % 2 === 0
-            // anchor at midpoint of each half so text stays centered within its side
-            const lx = isRight ? 210 : 70
+            // 14px gap from spine (x=95): right labels start at 109, left labels end at 81
+            const lx = isRight ? 109 : 81
+            const anchor = isRight ? "start" : "end"
             const label = NODE_SHORT[i]
             const words = label.split(" ")
             const isLong = label.length > 15
@@ -288,12 +290,12 @@ export default function Timeline() {
               >
                 <text
                   x={lx}
-                  y={isLong ? pos.y - 14 : pos.y - 5}
-                  textAnchor="middle"
+                  y={isLong ? pos.y - 12 : pos.y - 5}
+                  textAnchor={anchor}
                   fill={textFill}
                   fontFamily="var(--font-display), var(--font-mono), sans-serif"
                   fontWeight={isActive ? 700 : 400}
-                  fontSize={22}
+                  fontSize={18}
                   style={{ transition: "fill 0.3s ease" }}
                 >
                   {line1}
@@ -301,12 +303,12 @@ export default function Timeline() {
                 {isLong && (
                   <text
                     x={lx}
-                    y={pos.y + 18}
-                    textAnchor="middle"
+                    y={pos.y + 14}
+                    textAnchor={anchor}
                     fill={textFill}
                     fontFamily="var(--font-display), var(--font-mono), sans-serif"
                     fontWeight={isActive ? 700 : 400}
-                    fontSize={22}
+                    fontSize={18}
                     style={{ transition: "fill 0.3s ease" }}
                   >
                     {line2}
@@ -314,11 +316,11 @@ export default function Timeline() {
                 )}
                 <text
                   x={lx}
-                  y={isLong ? pos.y + 44 : pos.y + 22}
-                  textAnchor="middle"
+                  y={isLong ? pos.y + 36 : pos.y + 19}
+                  textAnchor={anchor}
                   fill="rgba(107,114,128,0.65)"
                   fontFamily="var(--font-mono), monospace"
-                  fontSize={14}
+                  fontSize={12}
                 >
                   {timelineData[i].dates}
                 </text>
