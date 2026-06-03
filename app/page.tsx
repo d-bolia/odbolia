@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState, useEffect, useCallback } from "react"
+import { useRef, useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Canvas } from "@react-three/fiber"
 
@@ -10,7 +10,6 @@ import Projects from "@/components/Projects"
 import Timeline from "@/components/Timeline"
 import ContactSection from "@/components/ContactSection"
 import BranchPanel from "@/components/BranchPanel"
-import AboutBranch from "@/components/AboutBranch"
 import FixedNav from "@/components/FixedNav"
 import MiniSphere from "@/components/MiniSphere"
 import { Waves } from "@/components/Waves"
@@ -20,27 +19,13 @@ if (typeof window !== "undefined") {
   history.scrollRestoration = "manual"
 }
 
-type LoopPhase = "idle" | "covering" | "uncovering"
-
-const WAVE_GRADIENT = [
-  { color: "#15803D", offset: 0    },
-  { color: "#06B6D4", offset: 0.25 },
-  { color: "#6B21A8", offset: 0.5  },
-  { color: "#EC4899", offset: 1    },
-]
-
 export default function Home() {
-  const [pastHero,      setPastHero]      = useState(false)
-  const [branchOpen,    setBranchOpen]    = useState(false)
-  const [loopPhase,     setLoopPhase]     = useState<LoopPhase>("idle")
+  const [pastHero,   setPastHero]   = useState(false)
+  const [branchOpen, setBranchOpen] = useState(false)
 
-  const heroRef      = useRef<HTMLDivElement>(null)
-  const aboutRef     = useRef<HTMLElement>(null)
-  const contactRef   = useRef<HTMLElement>(null)
-  const sentinelRef  = useRef<HTMLDivElement>(null)
-  const isLoopingRef       = useRef(false)
-  const sentinelVisibleRef = useRef(false)
-  const touchStartYRef     = useRef(0)
+  const heroRef    = useRef<HTMLDivElement>(null)
+  const aboutRef   = useRef<HTMLElement>(null)
+  const contactRef = useRef<HTMLElement>(null)
 
   // Force scroll to top before any scroll-driven transforms initialize
   useEffect(() => {
@@ -59,60 +44,6 @@ export default function Home() {
     return () => obs.disconnect()
   }, [])
 
-  // ── Infinite carousel sentinel ────────────────────────────────────────────
-  const triggerLoop = useCallback(async () => {
-    if (isLoopingRef.current) return
-    isLoopingRef.current = true
-
-    setLoopPhase("covering")
-    await new Promise<void>((r) => setTimeout(r, 1200))
-
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior })
-    setPastHero(false)
-
-    setLoopPhase("uncovering")
-  }, [])
-
-  const handleLoopDone = useCallback(() => {
-    setLoopPhase("idle")
-    isLoopingRef.current = false
-  }, [])
-
-  useEffect(() => {
-    const el = sentinelRef.current
-    if (!el) return
-
-    const obs = new IntersectionObserver(
-      ([e]) => { sentinelVisibleRef.current = e.isIntersecting },
-      { threshold: 0.5 }
-    )
-    obs.observe(el)
-
-    const onWheel = (e: WheelEvent) => {
-      if (sentinelVisibleRef.current && e.deltaY > 0) triggerLoop()
-    }
-    const onTouchStart = (e: TouchEvent) => {
-      touchStartYRef.current = e.touches[0].clientY
-    }
-    const onTouchEnd = (e: TouchEvent) => {
-      if (!sentinelVisibleRef.current) return
-      const delta = touchStartYRef.current - e.changedTouches[0].clientY
-      if (delta > 30) triggerLoop()
-    }
-
-    window.addEventListener("wheel", onWheel, { passive: true })
-    window.addEventListener("touchstart", onTouchStart, { passive: true })
-    window.addEventListener("touchend", onTouchEnd, { passive: true })
-
-    return () => {
-      obs.disconnect()
-      window.removeEventListener("wheel", onWheel)
-      window.removeEventListener("touchstart", onTouchStart)
-      window.removeEventListener("touchend", onTouchEnd)
-    }
-  }, [triggerLoop])
-
-  // ── Helpers ───────────────────────────────────────────────────────────────
   const scrollToHero = () => {
     heroRef.current?.scrollIntoView({ behavior: "smooth" })
   }
@@ -130,11 +61,7 @@ export default function Home() {
         branchOpen={branchOpen}
       />
       <Projects />
-      <Timeline />
       <ContactSection sectionRef={contactRef} />
-
-      {/* Invisible sentinel that triggers the carousel loop */}
-      <div ref={sentinelRef} style={{ height: 1 }} />
 
       {/* ── Global Waves background (fixed, post-hero) ────────────────────── */}
       <div
@@ -143,12 +70,17 @@ export default function Home() {
           inset: 0,
           zIndex: 1,
           pointerEvents: "none",
-          opacity: pastHero && loopPhase === "idle" ? 0.35 : 0,
+          opacity: pastHero ? 0.35 : 0,
           transition: "opacity 0.6s ease",
         }}
       >
         <Waves
-          gradientColors={WAVE_GRADIENT}
+          gradientColors={[
+            { color: "#15803D", offset: 0    },
+            { color: "#06B6D4", offset: 0.25 },
+            { color: "#6B21A8", offset: 0.5  },
+            { color: "#EC4899", offset: 1    },
+          ]}
           backgroundColor="transparent"
           pointerSize={0}
         />
@@ -156,7 +88,7 @@ export default function Home() {
 
       {/* ── Persistent mini sphere (fixed top-left) ───────────────────────── */}
       <AnimatePresence>
-        {pastHero && loopPhase === "idle" && (
+        {pastHero && (
           <motion.div
             key="mini-sphere"
             initial={{ opacity: 0, scale: 0.7 }}
@@ -190,7 +122,7 @@ export default function Home() {
 
       {/* ── Persistent nav icons (fixed top-right) ────────────────────────── */}
       <AnimatePresence>
-        {pastHero && loopPhase === "idle" && (
+        {pastHero && (
           <motion.div
             key="fixed-nav"
             initial={{ opacity: 0 }}
@@ -204,6 +136,41 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      {/* ── Return to Top button (fixed bottom-right) ─────────────────────── */}
+      <AnimatePresence>
+        {pastHero && (
+          <motion.button
+            key="return-to-top"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            onClick={scrollToHero}
+            style={{
+              position: "fixed",
+              bottom: 24,
+              right: 24,
+              zIndex: 100,
+              display: "flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.45rem 0.85rem",
+              background: "rgba(10,10,10,0.85)",
+              border: "1px solid rgba(244,114,182,0.3)",
+              borderRadius: 8,
+              color: "#f472b6",
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: "0.72rem",
+              letterSpacing: "0.1em",
+              cursor: "pointer",
+              backdropFilter: "blur(6px)",
+            }}
+          >
+            ↑ Top
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* ── About / Career Journey branch panel ───────────────────────────── */}
       <AnimatePresence>
         {branchOpen && (
@@ -211,41 +178,10 @@ export default function Home() {
             key="about-branch"
             onClose={() => setBranchOpen(false)}
           >
-            <AboutBranch />
+            <Timeline />
           </BranchPanel>
         )}
       </AnimatePresence>
-
-      {/* ── Infinite carousel transition overlay ─────────────────────────── */}
-      {loopPhase !== "idle" && (
-        <motion.div
-          key="loop-overlay"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: loopPhase === "covering" ? 1 : 0 }}
-          transition={{
-            duration: loopPhase === "covering" ? 0.9 : 1.1,
-            ease: "easeInOut",
-          }}
-          onAnimationComplete={
-            loopPhase === "uncovering" ? handleLoopDone : undefined
-          }
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 999,
-            background: "#0a0a0a",
-            pointerEvents: "all",
-          }}
-        >
-          <Canvas
-            camera={{ position: [0, 0, 6.5], fov: 55 }}
-            gl={{ antialias: true, alpha: false }}
-            style={{ background: "#0a0a0a", width: "100%", height: "100%" }}
-          >
-            <MiniSphere />
-          </Canvas>
-        </motion.div>
-      )}
     </>
   )
 }
