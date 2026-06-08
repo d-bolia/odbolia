@@ -26,11 +26,26 @@ const WAVE_GRADIENT = [
 ]
 
 // 4 equal-height sections → each occupies 1/3 of the total scroll range
-// (max scroll = 3 × 100dvh; each section scrolled over in 1/3 of that)
 const S0 = 0
 const S1 = 1 / 3
 const S2 = 2 / 3
 const S3 = 1
+
+// Outer sticky div: plain div — no transforms, so position:sticky works reliably.
+// Inner motion.div: carries the scroll-driven scale. Keeps transforms off the
+// sticky element to avoid browser quirks with sticky + transform interaction.
+const OUTER: React.CSSProperties = {
+  position: "sticky",
+  top:      0,
+  height:   "100dvh",
+  overflow: "hidden",
+  background: "#0a0a0a",
+}
+
+const INNER: React.CSSProperties = {
+  height:          "100%",
+  transformOrigin: "top center",
+}
 
 export default function Home() {
   const [pastHero,   setPastHero]   = useState(false)
@@ -42,19 +57,18 @@ export default function Home() {
   // ── Scroll-driven transforms ──────────────────────────────────────────────
   const { scrollYProgress } = useScroll()
 
-  const heroScale            = useTransform(scrollYProgress, [S0, S1], [1,     0.94])
-  const heroBorderRadius     = useTransform(scrollYProgress, [S0, S1], ["0px", "12px"])
+  const heroScale    = useTransform(scrollYProgress, [S0, S1], [1,     0.94])
+  const aboutScale   = useTransform(scrollYProgress, [S1, S2], [1,     0.94])
+  const projectScale = useTransform(scrollYProgress, [S2, S3], [1,     0.94])
 
-  const aboutScale           = useTransform(scrollYProgress, [S1, S2], [1,     0.94])
-  const aboutBorderRadius    = useTransform(scrollYProgress, [S1, S2], ["0px", "12px"])
-
-  const projectScale         = useTransform(scrollYProgress, [S2, S3], [1,     0.94])
-  const projectBorderRadius  = useTransform(scrollYProgress, [S2, S3], ["0px", "12px"])
+  const heroRadius    = useTransform(scrollYProgress, [S0, S1], ["0px", "12px"])
+  const aboutRadius   = useTransform(scrollYProgress, [S1, S2], ["0px", "12px"])
+  const projectRadius = useTransform(scrollYProgress, [S2, S3], ["0px", "12px"])
 
   // ── Init ──────────────────────────────────────────────────────────────────
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
-  // ── pastHero: scroll-based (IO doesn't work on sticky-pinned elements) ────
+  // ── pastHero: scroll-based (IO won't work on sticky-pinned elements) ──────
   useEffect(() => {
     const onScroll = () => setPastHero(window.scrollY > window.innerHeight * 0.15)
     window.addEventListener("scroll", onScroll, { passive: true })
@@ -66,67 +80,32 @@ export default function Home() {
   return (
     <>
       {/* ── Hero — sticky card 1 ─────────────────────────────────────────── */}
-      <motion.div
-        style={{
-          position:        "sticky",
-          top:             0,
-          height:          "100dvh",
-          zIndex:          1,
-          overflow:        "hidden",
-          scale:           heroScale,
-          borderRadius:    heroBorderRadius,
-          transformOrigin: "50% 0%",
-        }}
-      >
-        <HeroSection pastHero={pastHero} />
-      </motion.div>
+      <div style={{ ...OUTER, zIndex: 1 }}>
+        <motion.div style={{ ...INNER, scale: heroScale, borderRadius: heroRadius }}>
+          <HeroSection pastHero={pastHero} />
+        </motion.div>
+      </div>
 
       {/* ── Profile — sticky card 2 ───────────────────────────────────────── */}
-      <motion.div
-        style={{
-          position:        "sticky",
-          top:             0,
-          height:          "100dvh",
-          zIndex:          2,
-          overflow:        "hidden",
-          scale:           aboutScale,
-          borderRadius:    aboutBorderRadius,
-          transformOrigin: "50% 0%",
-        }}
-      >
-        <AboutSection
-          sectionRef={aboutRef}
-          onOpenBranch={() => setBranchOpen(true)}
-          branchOpen={branchOpen}
-        />
-      </motion.div>
+      <div style={{ ...OUTER, zIndex: 2 }}>
+        <motion.div style={{ ...INNER, scale: aboutScale, borderRadius: aboutRadius }}>
+          <AboutSection
+            sectionRef={aboutRef}
+            onOpenBranch={() => setBranchOpen(true)}
+            branchOpen={branchOpen}
+          />
+        </motion.div>
+      </div>
 
       {/* ── Projects — sticky card 3 ──────────────────────────────────────── */}
-      <motion.div
-        style={{
-          position:        "sticky",
-          top:             0,
-          height:          "100dvh",
-          zIndex:          3,
-          overflow:        "hidden",
-          scale:           projectScale,
-          borderRadius:    projectBorderRadius,
-          transformOrigin: "50% 0%",
-        }}
-      >
-        <Projects />
-      </motion.div>
+      <div style={{ ...OUTER, zIndex: 3 }}>
+        <motion.div style={{ ...INNER, scale: projectScale, borderRadius: projectRadius }}>
+          <Projects />
+        </motion.div>
+      </div>
 
       {/* ── Contact — sticky card 4 (last, no scale-back) ─────────────────── */}
-      <div
-        style={{
-          position: "sticky",
-          top:      0,
-          height:   "100dvh",
-          zIndex:   4,
-          overflow: "hidden",
-        }}
-      >
+      <div style={{ ...OUTER, zIndex: 4 }}>
         <ContactSection sectionRef={contactRef} />
       </div>
 
