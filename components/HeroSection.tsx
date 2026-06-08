@@ -38,15 +38,16 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
   const [introScale, setIntroScale] = useState(0.05)
   const rafRef = useRef<number | null>(null)
 
-  // Explicit pixel dimensions so R3F receives a definite size.
-  // Start at 0 (matches SSR, avoids hydration mismatch); useEffect sets the real
-  // values client-side. Canvas wrapper falls back to "100%" while vpW === 0.
+  // Canvas is gated on canvasMounted so R3F always initializes into a container
+  // that already has real pixel dimensions — never a 0×0 SSR/hydration default.
   const [vpW, setVpW] = useState(0)
   const [vpH, setVpH] = useState(0)
+  const [canvasMounted, setCanvasMounted] = useState(false)
 
   useEffect(() => {
     setVpW(window.innerWidth)
     setVpH(window.innerHeight)
+    setCanvasMounted(true)
     function onResize() { setVpW(window.innerWidth); setVpH(window.innerHeight) }
     window.addEventListener("resize", onResize)
     return () => window.removeEventListener("resize", onResize)
@@ -84,28 +85,30 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
         overflow:        "hidden",
       }}
     >
-      {/* ── Sphere canvas — explicit pixel fill so R3F gets a definite size ─── */}
-      <div
-        style={{
-          position:        "absolute",
-          top:             0,
-          left:            0,
-          width:           vpW || "100%",
-          height:          vpH || "100%",
-          transform:       `scale(${introScale})`,
-          transformOrigin: "50% 50%",
-          pointerEvents:   "none",
-        }}
-      >
-        <Canvas
-          camera={{ position: [0, 0, 4.5], fov: 55 }}
-          gl={{ antialias: true, alpha: true }}
-          dpr={[1, 2]}
-          style={{ width: "100%", height: "100%", display: "block" }}
+      {/* ── Sphere canvas — gated until client dimensions are known ─────────── */}
+      {canvasMounted && (
+        <div
+          style={{
+            position:        "absolute",
+            top:             0,
+            left:            0,
+            width:           vpW,
+            height:          vpH,
+            transform:       `scale(${introScale})`,
+            transformOrigin: "50% 50%",
+            pointerEvents:   "none",
+          }}
         >
-          <SunSphere />
-        </Canvas>
-      </div>
+          <Canvas
+            camera={{ position: [0, 0, 4.5], fov: 55 }}
+            gl={{ antialias: true, alpha: true }}
+            dpr={[1, 2]}
+            style={{ width: "100%", height: "100%", display: "block" }}
+          >
+            <SunSphere />
+          </Canvas>
+        </div>
+      )}
 
       {/* ── Top-right nav ────────────────────────────────────────────────────── */}
       <motion.nav

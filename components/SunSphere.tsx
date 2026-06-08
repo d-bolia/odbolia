@@ -110,9 +110,9 @@ export default function SunSphere() {
     gl.setClearColor(0x000000, 0)
   }, [gl])
 
-  // Force renderer to full window dimensions and keep it in sync on resize.
-  // Two nested RAFs defer past R3F's own initialization and ResizeObserver,
-  // ensuring gl.setSize wins over any 0×0 measurement from the SSR/hydration gap.
+  // Keep renderer dimensions and camera aspect in sync with the window.
+  // Canvas is guaranteed to mount after HeroSection measures the viewport,
+  // so the initial resize() call always sees correct dimensions.
   useEffect(() => {
     function resize() {
       gl.setSize(window.innerWidth, window.innerHeight, false)
@@ -121,18 +121,9 @@ export default function SunSphere() {
         camera.updateProjectionMatrix()
       }
     }
-
-    let raf1: number, raf2: number
-    raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(resize)
-    })
-
+    resize()
     window.addEventListener("resize", resize)
-    return () => {
-      cancelAnimationFrame(raf1)
-      cancelAnimationFrame(raf2)
-      window.removeEventListener("resize", resize)
-    }
+    return () => window.removeEventListener("resize", resize)
   }, [gl, camera])
 
   useEffect(() => {
