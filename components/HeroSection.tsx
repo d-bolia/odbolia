@@ -38,11 +38,15 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
   const [introScale, setIntroScale] = useState(0.05)
   const rafRef = useRef<number | null>(null)
 
-  // Explicit pixel dimensions so R3F receives a definite size from the start
-  const [vpW, setVpW] = useState(() => (typeof window !== "undefined" ? window.innerWidth  : 0))
-  const [vpH, setVpH] = useState(() => (typeof window !== "undefined" ? window.innerHeight : 0))
+  // Explicit pixel dimensions so R3F receives a definite size.
+  // Start at 0 (matches SSR, avoids hydration mismatch); useEffect sets the real
+  // values client-side. Canvas wrapper falls back to "100%" while vpW === 0.
+  const [vpW, setVpW] = useState(0)
+  const [vpH, setVpH] = useState(0)
 
   useEffect(() => {
+    setVpW(window.innerWidth)
+    setVpH(window.innerHeight)
     function onResize() { setVpW(window.innerWidth); setVpH(window.innerHeight) }
     window.addEventListener("resize", onResize)
     return () => window.removeEventListener("resize", onResize)

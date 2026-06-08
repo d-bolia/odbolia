@@ -110,7 +110,9 @@ export default function SunSphere() {
     gl.setClearColor(0x000000, 0)
   }, [gl])
 
-  // Force renderer to full window dimensions and keep it in sync on resize
+  // Force renderer to full window dimensions and keep it in sync on resize.
+  // Two nested RAFs defer past R3F's own initialization and ResizeObserver,
+  // ensuring gl.setSize wins over any 0×0 measurement from the SSR/hydration gap.
   useEffect(() => {
     function resize() {
       gl.setSize(window.innerWidth, window.innerHeight, false)
@@ -119,9 +121,18 @@ export default function SunSphere() {
         camera.updateProjectionMatrix()
       }
     }
-    resize()
+
+    let raf1: number, raf2: number
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(resize)
+    })
+
     window.addEventListener("resize", resize)
-    return () => window.removeEventListener("resize", resize)
+    return () => {
+      cancelAnimationFrame(raf1)
+      cancelAnimationFrame(raf2)
+      window.removeEventListener("resize", resize)
+    }
   }, [gl, camera])
 
   useEffect(() => {
