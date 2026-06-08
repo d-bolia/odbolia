@@ -38,6 +38,16 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
   const [introScale, setIntroScale] = useState(0.05)
   const rafRef = useRef<number | null>(null)
 
+  // Explicit pixel dimensions so R3F receives a definite size from the start
+  const [vpW, setVpW] = useState(() => (typeof window !== "undefined" ? window.innerWidth  : 0))
+  const [vpH, setVpH] = useState(() => (typeof window !== "undefined" ? window.innerHeight : 0))
+
+  useEffect(() => {
+    function onResize() { setVpW(window.innerWidth); setVpH(window.innerHeight) }
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
+
   // Grow-in: sphere scales from 5% → 100% over 900 ms
   useEffect(() => {
     const DURATION  = 900
@@ -70,11 +80,14 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
         overflow:        "hidden",
       }}
     >
-      {/* ── Sphere canvas — absolute fill, sphere centered in 3D world ──────── */}
+      {/* ── Sphere canvas — explicit pixel fill so R3F gets a definite size ─── */}
       <div
         style={{
           position:        "absolute",
-          inset:           0,
+          top:             0,
+          left:            0,
+          width:           vpW || "100%",
+          height:          vpH || "100%",
           transform:       `scale(${introScale})`,
           transformOrigin: "50% 50%",
           pointerEvents:   "none",

@@ -103,12 +103,26 @@ const fragmentShader = /* glsl */ `
 
 export default function SunSphere() {
   const meshRef = useRef<THREE.Mesh>(null)
-  const { gl } = useThree()
+  const { gl, camera } = useThree()
   const pointerRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     gl.setClearColor(0x000000, 0)
   }, [gl])
+
+  // Force renderer to full window dimensions and keep it in sync on resize
+  useEffect(() => {
+    function resize() {
+      gl.setSize(window.innerWidth, window.innerHeight, false)
+      if (camera instanceof THREE.PerspectiveCamera) {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+      }
+    }
+    resize()
+    window.addEventListener("resize", resize)
+    return () => window.removeEventListener("resize", resize)
+  }, [gl, camera])
 
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
