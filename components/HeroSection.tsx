@@ -64,13 +64,10 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
     <main
       style={{
         position:        "relative",
-        width:           "100vw",
-        height:          "100vh",
+        width:           "100%",
+        height:          "100%",
         background:      "#0a0a0a",
         overflow:        "hidden",
-        display:         "flex",
-        alignItems:      "center",
-        justifyContent:  "center",
       }}
     >
       {/* ── Sphere canvas — absolute fill, sphere centered in 3D world ──────── */}
@@ -84,7 +81,7 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
         }}
       >
         <Canvas
-          camera={{ position: [0, 0, 6.5], fov: 55 }}
+          camera={{ position: [0, 0, 4.5], fov: 55 }}
           gl={{ antialias: true, alpha: true }}
           dpr={[1, 2]}
           style={{ width: "100%", height: "100%", display: "block" }}
@@ -116,14 +113,14 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
         </NavLink>
       </motion.nav>
 
-      {/* ── Name + title — bottom-left overlay, doesn't displace sphere ──────── */}
+      {/* ── Name + title — top-left overlay ─────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.0 }}
         style={{
           position:      "absolute",
-          bottom:        28,
+          top:           28,
           left:          32,
           zIndex:        10,
           pointerEvents: "none",
@@ -138,7 +135,7 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
             fontFamily:    "var(--font-mono), monospace",
             textTransform: "uppercase",
             fontWeight:    700,
-            fontSize:      "clamp(1.1rem, 2.6vw, 2.2rem)",
+            fontSize:      "clamp(1.6rem, 3.5vw, 3rem)",
             letterSpacing: "0.12em",
             lineHeight:    1,
             color:         "#e8e8e8",
@@ -153,7 +150,7 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
             fontFamily:    "var(--font-mono), monospace",
             textTransform: "uppercase",
             fontWeight:    300,
-            fontSize:      "clamp(0.5rem, 0.9vw, 0.72rem)",
+            fontSize:      "clamp(0.65rem, 1.2vw, 0.95rem)",
             letterSpacing: "0.38em",
             color:         "rgba(232,232,232,0.4)",
             margin:        0,

@@ -37,12 +37,14 @@ const S3 = 1
 const OUTER: React.CSSProperties = {
   position: "sticky",
   top:      0,
+  width:    "100%",
   height:   "100dvh",
   overflow: "hidden",
   background: "#0a0a0a",
 }
 
 const INNER: React.CSSProperties = {
+  width:           "100%",
   height:          "100%",
   transformOrigin: "top center",
 }
