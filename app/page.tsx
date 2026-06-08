@@ -65,6 +65,11 @@ export default function Home() {
   const aboutRadius   = useTransform(scrollYProgress, [S1, S2], ["0px", "12px"])
   const projectRadius = useTransform(scrollYProgress, [S2, S3], ["0px", "12px"])
 
+  // Bar fades out in the last ~8% of each section's scroll range (as it docks at top)
+  const aboutBarOpacity   = useTransform(scrollYProgress, [S1 - 0.08, S1], [1, 0])
+  const projectBarOpacity = useTransform(scrollYProgress, [S2 - 0.08, S2], [1, 0])
+  const contactBarOpacity = useTransform(scrollYProgress, [S3 - 0.08, S3], [1, 0])
+
   // ── Init ──────────────────────────────────────────────────────────────────
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
@@ -88,6 +93,21 @@ export default function Home() {
 
       {/* ── Profile — sticky card 2 ───────────────────────────────────────── */}
       <div style={{ ...OUTER, zIndex: 2 }}>
+        {/* Leading bar — visible while sliding up, fades once docked at top */}
+        <motion.div
+          aria-hidden
+          style={{
+            position:      "absolute",
+            top:           0,
+            left:          0,
+            right:         0,
+            height:        28,
+            background:    "#0a0a0a",
+            zIndex:        10,
+            pointerEvents: "none",
+            opacity:       aboutBarOpacity,
+          }}
+        />
         <motion.div style={{ ...INNER, scale: aboutScale, borderRadius: aboutRadius }}>
           <AboutSection
             sectionRef={aboutRef}
@@ -99,6 +119,20 @@ export default function Home() {
 
       {/* ── Projects — sticky card 3 ──────────────────────────────────────── */}
       <div style={{ ...OUTER, zIndex: 3 }}>
+        <motion.div
+          aria-hidden
+          style={{
+            position:      "absolute",
+            top:           0,
+            left:          0,
+            right:         0,
+            height:        28,
+            background:    "#0a0a0a",
+            zIndex:        10,
+            pointerEvents: "none",
+            opacity:       projectBarOpacity,
+          }}
+        />
         <motion.div style={{ ...INNER, scale: projectScale, borderRadius: projectRadius }}>
           <Projects />
         </motion.div>
@@ -106,6 +140,20 @@ export default function Home() {
 
       {/* ── Contact — sticky card 4 (last, no scale-back) ─────────────────── */}
       <div style={{ ...OUTER, zIndex: 4 }}>
+        <motion.div
+          aria-hidden
+          style={{
+            position:      "absolute",
+            top:           0,
+            left:          0,
+            right:         0,
+            height:        28,
+            background:    "#0a0a0a",
+            zIndex:        10,
+            pointerEvents: "none",
+            opacity:       contactBarOpacity,
+          }}
+        />
         <ContactSection sectionRef={contactRef} />
       </div>
 
