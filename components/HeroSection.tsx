@@ -1,10 +1,11 @@
 "use client"
 
-import { useRef, useEffect, useLayoutEffect, useState } from "react"
+import { useRef, useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { Canvas } from "@react-three/fiber"
 import { motion } from "framer-motion"
 import SunSphere from "./SunSphere"
+import BinaryReveal from "./BinaryReveal"
 
 // ---------------------------------------------------------------------------
 // Inline SVG icons
@@ -27,88 +28,127 @@ function LinkedInIcon() {
 }
 
 // ---------------------------------------------------------------------------
-// Shared type token — Geist Mono base
 const MONO: React.CSSProperties = {
   fontFamily: "var(--font-mono), monospace",
   textTransform: "uppercase",
 }
 
 // ---------------------------------------------------------------------------
-// Scroll-transition constants (mirror page.tsx MiniSphere geometry)
+// Scroll-transition constants
 // ---------------------------------------------------------------------------
 
-const MINI_SIZE   = 52    // px — matches MiniSphere width/height
-const MINI_TOP    = 16    // px — matches MiniSphere top
-const MINI_LEFT   = 16    // px — matches MiniSphere left
-const SCROLL_ZONE = 0.85  // progress reaches 1.0 at scrollY = 85% of vh
+const MINI_SIZE   = 52    // px
+const MINI_TOP    = 16    // px
+const MINI_LEFT   = 16    // px
+const SCROLL_ZONE = 0.85
 
-function applyScrollTransform(container: HTMLDivElement, vw: number, vh: number) {
-  const progress = Math.min(1, Math.max(0, window.scrollY / (vh * SCROLL_ZONE)))
+// ---------------------------------------------------------------------------
+// Transform math (pure function, no DOM access)
+// ---------------------------------------------------------------------------
+//
+// Uses transformOrigin "50% 50%" on the container so scale always operates
+// from the visual center of the canvas. This means:
+//   - During intro (scrollProgress=0): tx=0, ty=0, scale grows 0.05→1.
+//     The sphere scales up from dead center with zero translate.
+//   - During scroll (scrollProgress>0): translate moves the sphere center
+//     from (vw/2, vh/2) toward the mini-sphere corner (MINI_LEFT+26, MINI_TOP+26).
+//     Scale shrinks in parallel.
+//
+function computeTransform(vw: number, vh: number, scrollProgress: number, introScale: number) {
+  const sFinal  = vh > 0 ? MINI_SIZE / (0.4436 * vh) : 0
+  const scrollS = Math.max(sFinal, 1 - scrollProgress * (1 - sFinal))
+  const s       = scrollS * introScale
 
-  // Scale: contracts from 1 (full screen) down to ~52px equivalent
-  const sFinal = MINI_SIZE / (0.4436 * vh)
-  const s      = 1 - progress * (1 - sFinal)
-
-  // Translate: moves sphere center from (vw/2, vh/2) to (MINI_LEFT+26, MINI_TOP+26)
-  // transform-origin is top-left, so after scale the center is at (vw*s/2, vh*s/2)
   const targetCX = MINI_LEFT + MINI_SIZE / 2  // 42
   const targetCY = MINI_TOP  + MINI_SIZE / 2  // 42
-  const tx = progress * (targetCX - (vw / 2) * sFinal)
-  const ty = progress * (targetCY - (vh / 2) * sFinal)
 
-  const opacity = progress >= 0.9 ? Math.max(0, 1 - (progress - 0.9) / 0.1) : 1
+  // With transformOrigin 50%/50%, translate moves the sphere center directly.
+  // At scrollProgress=0: tx=ty=0 (centered). At scrollProgress=1: tx/ty point to corner.
+  const tx = scrollProgress * (targetCX - vw / 2)
+  const ty = scrollProgress * (targetCY - vh / 2)
 
-  container.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`
-  container.style.opacity   = String(opacity)
+  return { tx, ty, s }
 }
 
 // ---------------------------------------------------------------------------
 // Hero
 // ---------------------------------------------------------------------------
 
-export default function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const vwRef        = useRef(0)
-  const vhRef        = useRef(0)
-  const rafRef       = useRef<number | null>(null)
-  const [mounted, setMounted] = useState(false)
+interface HeroSectionProps {
+  pastHero?: boolean
+}
+
+export default function HeroSection({ pastHero = false }: HeroSectionProps) {
+  // Initialize vw/vh from window immediately so first render has real dimensions
+  const vwRef = useRef(typeof window !== "undefined" ? window.innerWidth  : 1280)
+  const vhRef = useRef(typeof window !== "undefined" ? window.innerHeight : 800)
+  const rafRef      = useRef<number | null>(null)
+  const introRafRef = useRef<number | null>(null)
+
+  const [mounted,        setMounted]        = useState(false)
+  // scrollProgress=0 means centered; 1 means corner. Initialized to 0 as React
+  // state so the first render is always centered — browser scroll restoration
+  // cannot affect this value before the first paint.
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [introScale,     setIntroScale]     = useState(0.05)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // Set initial transform synchronously before first paint
-  useLayoutEffect(() => {
-    vwRef.current = window.innerWidth
-    vhRef.current = window.innerHeight
-    if (containerRef.current) {
-      applyScrollTransform(containerRef.current, vwRef.current, vhRef.current)
+  // Sphere grow-in: animate introScale 0.05 → 1 over 900ms via RAF,
+  // updating React state so the declarative transform re-renders each frame.
+  useEffect(() => {
+    if (!mounted) return
+
+    const DURATION  = 900
+    const START     = 0.05
+    const startTime = performance.now()
+
+    function introTick(now: number) {
+      const t    = Math.min(1, (now - startTime) / DURATION)
+      const ease = 1 - Math.pow(1 - t, 3)
+      const scale = START + (1 - START) * ease
+      setIntroScale(scale)
+      if (t < 1) {
+        introRafRef.current = requestAnimationFrame(introTick)
+      } else {
+        setIntroScale(1)
+        introRafRef.current = null
+      }
+    }
+
+    introRafRef.current = requestAnimationFrame(introTick)
+    return () => {
+      if (introRafRef.current !== null) cancelAnimationFrame(introRafRef.current)
     }
   }, [mounted])
 
+  // Scroll & resize listener — updates scrollProgress state only
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
+    if (!mounted) return
 
     vwRef.current = window.innerWidth
     vhRef.current = window.innerHeight
 
-    function tick() {
-      applyScrollTransform(container!, vwRef.current, vhRef.current)
-    }
     function onScroll() {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
-      rafRef.current = requestAnimationFrame(tick)
+      rafRef.current = requestAnimationFrame(() => {
+        const progress = Math.min(1, Math.max(0, window.scrollY / (vhRef.current * SCROLL_ZONE)))
+        setScrollProgress(progress)
+        rafRef.current = null
+      })
     }
+
     function onResize() {
       vwRef.current = window.innerWidth
       vhRef.current = window.innerHeight
-      tick()
+      const progress = Math.min(1, Math.max(0, window.scrollY / (vhRef.current * SCROLL_ZONE)))
+      setScrollProgress(progress)
     }
 
     window.addEventListener("scroll", onScroll, { passive: true })
     window.addEventListener("resize", onResize)
-    tick() // apply immediately
 
     return () => {
       window.removeEventListener("scroll", onScroll)
@@ -117,32 +157,50 @@ export default function HeroSection() {
     }
   }, [mounted])
 
-  // Portal: canvas rendered directly into document.body, escaping <main>'s
-  // stacking context so no ancestor transform can hijack position: fixed
+  // Compute transform from state — always deterministic, no window.scrollY reads here
+  const { tx, ty, s } = computeTransform(vwRef.current, vhRef.current, scrollProgress, introScale)
+
   const portalCanvas = mounted
     ? createPortal(
+        // Outer div: full-screen fixed overlay, no transform — handles opacity only
         <div
-          ref={containerRef}
           style={{
-            position:        "fixed",
-            top:             0,
-            left:            0,
-            width:           "100vw",
-            height:          "100vh",
-            zIndex:          110,
-            pointerEvents:   "none",
-            transformOrigin: "top left",
-            willChange:      "transform",
+            position:   "fixed",
+            top:        0,
+            left:       0,
+            width:      "100vw",
+            height:     "100vh",
+            zIndex:     110,
+            pointerEvents: "none",
+            opacity:    pastHero ? 0 : 1,
+            transition: "opacity 0.4s ease",
           }}
         >
-          <Canvas
-            camera={{ position: [0, 0, 6.5], fov: 55 }}
-            gl={{ antialias: true, alpha: true }}
-            dpr={[1, 2]}
-            style={{ pointerEvents: "none" }}
+          {/*
+            Inner div: centered via top/left 50% + translate(-50%,-50%).
+            The scroll/scale transform is stacked on top of the centering so
+            they cannot interfere. At scrollProgress=0 the sphere is dead center;
+            scroll moves it toward the corner.
+          */}
+          <div
+            style={{
+              position:        "absolute",
+              inset:           0,
+              willChange:      "transform",
+              pointerEvents:   "none",
+              transformOrigin: "50% 50%",
+              transform:       `translate(${tx}px, ${ty}px) scale(${s})`,
+            }}
           >
-            <SunSphere />
-          </Canvas>
+            <Canvas
+              camera={{ position: [0, 0, 6.5], fov: 55 }}
+              gl={{ antialias: true, alpha: true }}
+              dpr={[1, 2]}
+              style={{ width: "100%", height: "100%", pointerEvents: "none" }}
+            >
+              <SunSphere />
+            </Canvas>
+          </div>
         </div>,
         document.body
       )
@@ -152,7 +210,6 @@ export default function HeroSection() {
     <>
       {portalCanvas}
 
-      {/* Scroll-space placeholder + hero text/nav */}
       <main
         style={{
           position: "relative",
@@ -185,55 +242,59 @@ export default function HeroSection() {
           </NavLink>
         </motion.nav>
 
-        {/* ---- Name + title — pinned to lower portion ---- */}
-        <div
+        {/* ---- Name + title — top left ---- */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.01, delay: 0.95 }}
           style={{
-            position: "absolute",
-            bottom: "11%",
-            left: 0,
-            right: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            zIndex: 10,
+            position:      "absolute",
+            top:           28,
+            left:          32,
+            zIndex:        10,
             pointerEvents: "none",
-            userSelect: "none",
+            userSelect:    "none",
+            display:       "flex",
+            flexDirection: "column",
+            gap:           "0.6rem",
           }}
         >
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          <h1
             style={{
               ...MONO,
-              fontWeight: 600,
-              fontSize: "clamp(1.6rem, 4.5vw, 3.8rem)",
-              letterSpacing: "0.14em",
-              lineHeight: 1,
-              color: "#e8e8e8",
-              margin: 0,
-              whiteSpace: "nowrap",
+              fontWeight:    700,
+              fontSize:      "clamp(1.1rem, 2.6vw, 2.2rem)",
+              letterSpacing: "0.12em",
+              lineHeight:    1,
+              color:         "#e8e8e8",
+              margin:        0,
+              whiteSpace:    "nowrap",
             }}
           >
-            Desmond Bolia
-          </motion.h1>
+            <BinaryReveal
+              text="DESMOND BOLIA"
+              startDelay={1000}
+              totalDuration={3000}
+            />
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          <p
             style={{
               ...MONO,
-              fontWeight: 300,
-              fontSize: "clamp(0.55rem, 1.1vw, 0.78rem)",
-              letterSpacing: "0.42em",
-              color: "rgba(232,232,232,0.35)",
-              marginTop: "1rem",
+              fontWeight:    300,
+              fontSize:      "clamp(0.5rem, 0.9vw, 0.72rem)",
+              letterSpacing: "0.38em",
+              color:         "rgba(232,232,232,0.4)",
+              margin:        0,
             }}
           >
-            Electrical Engineer
-          </motion.p>
-        </div>
+            <BinaryReveal
+              text="ELECTRICAL ENGINEER"
+              startDelay={2600}
+              totalDuration={1800}
+            />
+          </p>
+        </motion.div>
       </main>
     </>
   )

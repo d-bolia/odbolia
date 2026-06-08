@@ -103,11 +103,21 @@ const fragmentShader = /* glsl */ `
 
 export default function SunSphere() {
   const meshRef = useRef<THREE.Mesh>(null)
-  const { pointer, gl } = useThree()
+  const { gl } = useThree()
+  const pointerRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     gl.setClearColor(0x000000, 0)
   }, [gl])
+
+  useEffect(() => {
+    function onMouseMove(e: MouseEvent) {
+      pointerRef.current.x = (e.clientX / window.innerWidth) * 2 - 1
+      pointerRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1
+    }
+    window.addEventListener("mousemove", onMouseMove)
+    return () => window.removeEventListener("mousemove", onMouseMove)
+  }, [])
 
   const rotX = useRef(0)
   const rotY = useRef(0)
@@ -131,10 +141,8 @@ export default function SunSphere() {
 
     material.uniforms.uTime.value = state.clock.elapsedTime
 
-    // pointer is -1…+1 normalized to the canvas — full-screen canvas means
-    // this tracks cursor across the entire page
-    const targetX = -pointer.y * 0.3
-    const targetY =  pointer.x * 0.45
+    const targetX = -pointerRef.current.y * 0.3
+    const targetY =  pointerRef.current.x * 0.45
 
     const smooth = 1 - Math.exp(-5 * delta)
     rotX.current += (targetX - rotX.current) * smooth
@@ -146,7 +154,7 @@ export default function SunSphere() {
 
   return (
     <mesh ref={meshRef} material={material}>
-      <sphereGeometry args={[1.5, 96, 96]} />
+      <icosahedronGeometry args={[1.5, 5]} />
     </mesh>
   )
 }
