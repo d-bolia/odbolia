@@ -303,9 +303,8 @@ export default function Projects() {
   const [direction, setDirection] = useState(1)
   const [glitchKey, setGlitchKey] = useState(0)
 
-  const sectionRef  = useRef<HTMLElement>(null)
-  const cooldownRef = useRef(false)
-  const stateRef    = useRef({ activeIdx: 0, imageIdx: 0 })
+  const sectionRef = useRef<HTMLElement>(null)
+  const stateRef   = useRef({ activeIdx: 0, imageIdx: 0 })
 
   useEffect(() => { stateRef.current = { activeIdx, imageIdx } }, [activeIdx, imageIdx])
   useEffect(() => { setImageIdx(0) }, [activeIdx])
@@ -316,42 +315,6 @@ export default function Projects() {
     style.textContent = CHROMA_CSS
     document.head.appendChild(style)
     return () => { document.head.removeChild(style) }
-  }, [])
-
-  // Scroll trap — window-level, only active when section fills the viewport.
-  // Scroll advances/retreats between projects; never advances the image carousel.
-  // When on the last project, scroll down exits naturally to the next section.
-  useEffect(() => {
-    const handler = (e: WheelEvent) => {
-      const el = sectionRef.current
-      if (!el) return
-      const rect = el.getBoundingClientRect()
-      if (rect.top > 50 || rect.bottom < window.innerHeight - 50) return
-      if (cooldownRef.current) return
-
-      const { activeIdx: aIdx } = stateRef.current
-      const isDown = e.deltaY > 0
-
-      if (isDown && aIdx < projectsData.length - 1) {
-        e.preventDefault()
-        setDirection(1)
-        setActiveIdx((i) => i + 1)
-        setGlitchKey((k) => k + 1)
-        cooldownRef.current = true
-        setTimeout(() => { cooldownRef.current = false }, 660)
-      } else if (!isDown && aIdx > 0) {
-        e.preventDefault()
-        setDirection(-1)
-        setActiveIdx((i) => i - 1)
-        setGlitchKey((k) => k + 1)
-        cooldownRef.current = true
-        setTimeout(() => { cooldownRef.current = false }, 660)
-      }
-      // At first project scrolling up, or last project scrolling down: no preventDefault → page scrolls
-    }
-
-    window.addEventListener("wheel", handler, { passive: false })
-    return () => window.removeEventListener("wheel", handler)
   }, [])
 
   // Keyboard arrow keys advance the carousel when the section is active
