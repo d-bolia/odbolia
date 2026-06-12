@@ -50,8 +50,9 @@ const INNER: React.CSSProperties = {
 }
 
 export default function Home() {
-  const [pastHero,   setPastHero]   = useState(false)
-  const [branchOpen, setBranchOpen] = useState(false)
+  const [pastHero,       setPastHero]       = useState(false)
+  const [profileDocked,  setProfileDocked]  = useState(false)
+  const [branchOpen,     setBranchOpen]     = useState(false)
 
   const aboutRef   = useRef<HTMLElement>(null)
   const contactRef = useRef<HTMLElement>(null)
@@ -75,9 +76,17 @@ export default function Home() {
   // ── Init ──────────────────────────────────────────────────────────────────
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
-  // ── pastHero: scroll-based (IO won't work on sticky-pinned elements) ──────
+  // ── pastHero / profileDocked: scroll-based (IO won't work on sticky-pinned)
+  // pastHero      fires early (15% of vh) — drives Waves, FixedNav, Top button.
+  // profileDocked fires late  (85% of vh) — drives the mini sphere icon so it
+  //               only appears once the profile panel has slid into view.
   useEffect(() => {
-    const onScroll = () => setPastHero(window.scrollY > window.innerHeight * 0.15)
+    const onScroll = () => {
+      const y = window.scrollY
+      const vh = window.innerHeight
+      setPastHero(y > vh * 0.15)
+      setProfileDocked(y > vh * 0.85)
+    }
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
@@ -179,7 +188,7 @@ export default function Home() {
 
       {/* ── Persistent mini sphere (fixed top-left) ───────────────────────── */}
       <AnimatePresence>
-        {pastHero && (
+        {profileDocked && (
           <motion.div
             key="mini-sphere"
             initial={{ opacity: 0, scale: 0.7 }}

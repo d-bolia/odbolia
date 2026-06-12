@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Canvas } from "@react-three/fiber"
-import { motion } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import SunSphere from "./SunSphere"
 import BinaryReveal from "./BinaryReveal"
 
@@ -52,6 +52,13 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
     window.addEventListener("resize", onResize)
     return () => window.removeEventListener("resize", onResize)
   }, [])
+
+  // Scroll-driven exit for the name / title. Text translates up and fades out
+  // during the first ~10% of total scroll — ahead of the profile panel docking
+  // (which completes at scrollYProgress = 1/3) so it doesn't linger under it.
+  const { scrollYProgress } = useScroll()
+  const textY       = useTransform(scrollYProgress, [0, 0.1], [0,  -80])
+  const textOpacity = useTransform(scrollYProgress, [0, 0.1], [1,    0])
 
   return (
     <main
@@ -110,10 +117,10 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
       </motion.nav>
 
       {/* ── Name + title — top-left overlay ─────────────────────────────────── */}
+      {/* Outer wrapper carries scroll-driven y / opacity so the text exits up   */}
+      {/* and fades out as the profile panel slides in. Inner motion.div keeps   */}
+      {/* the original mount fade-in; opacities multiply (1 * mount → scroll).   */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1.0 }}
         style={{
           position:      "absolute",
           top:           28,
@@ -121,39 +128,49 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
           zIndex:        10,
           pointerEvents: "none",
           userSelect:    "none",
-          display:       "flex",
-          flexDirection: "column",
-          gap:           "0.6rem",
+          y:             textY,
+          opacity:       textOpacity,
         }}
       >
-        <h1
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1.0 }}
           style={{
-            fontFamily:    "var(--font-mono), monospace",
-            textTransform: "uppercase",
-            fontWeight:    700,
-            fontSize:      "clamp(1.6rem, 3.5vw, 3rem)",
-            letterSpacing: "0.12em",
-            lineHeight:    1,
-            color:         "#e8e8e8",
-            margin:        0,
-            whiteSpace:    "nowrap",
+            display:       "flex",
+            flexDirection: "column",
+            gap:           "0.6rem",
           }}
         >
-          <BinaryReveal text="DESMOND BOLIA" startDelay={1000} totalDuration={3000} />
-        </h1>
-        <p
-          style={{
-            fontFamily:    "var(--font-mono), monospace",
-            textTransform: "uppercase",
-            fontWeight:    300,
-            fontSize:      "clamp(0.65rem, 1.2vw, 0.95rem)",
-            letterSpacing: "0.38em",
-            color:         "rgba(232,232,232,0.4)",
-            margin:        0,
-          }}
-        >
-          <BinaryReveal text="ELECTRICAL ENGINEER" startDelay={2600} totalDuration={1800} />
-        </p>
+          <h1
+            style={{
+              fontFamily:    "var(--font-mono), monospace",
+              textTransform: "uppercase",
+              fontWeight:    700,
+              fontSize:      "clamp(1.6rem, 3.5vw, 3rem)",
+              letterSpacing: "0.12em",
+              lineHeight:    1,
+              color:         "#e8e8e8",
+              margin:        0,
+              whiteSpace:    "nowrap",
+            }}
+          >
+            <BinaryReveal text="DESMOND BOLIA" startDelay={1000} totalDuration={3000} />
+          </h1>
+          <p
+            style={{
+              fontFamily:    "var(--font-mono), monospace",
+              textTransform: "uppercase",
+              fontWeight:    300,
+              fontSize:      "clamp(0.65rem, 1.2vw, 0.95rem)",
+              letterSpacing: "0.38em",
+              color:         "rgba(232,232,232,0.4)",
+              margin:        0,
+            }}
+          >
+            <BinaryReveal text="ELECTRICAL ENGINEER" startDelay={2600} totalDuration={1800} />
+          </p>
+        </motion.div>
       </motion.div>
     </main>
   )
