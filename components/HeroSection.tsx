@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Canvas } from "@react-three/fiber"
 import { motion } from "framer-motion"
 import SunSphere from "./SunSphere"
@@ -35,11 +35,11 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ pastHero = false }: HeroSectionProps) {
-  const [introScale, setIntroScale] = useState(0.05)
-  const rafRef = useRef<number | null>(null)
-
   // Canvas is gated on canvasMounted so R3F always initializes into a container
   // that already has real pixel dimensions — never a 0×0 SSR/hydration default.
+  // No CSS transforms are applied to the canvas or its parent chain — the
+  // grow-in animation lives inside the Three.js scene (see SunSphere) so that
+  // R3F's getBoundingClientRect()-based measurement always sees the true size.
   const [vpW, setVpW] = useState(0)
   const [vpH, setVpH] = useState(0)
   const [canvasMounted, setCanvasMounted] = useState(false)
@@ -51,28 +51,6 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
     function onResize() { setVpW(window.innerWidth); setVpH(window.innerHeight) }
     window.addEventListener("resize", onResize)
     return () => window.removeEventListener("resize", onResize)
-  }, [])
-
-  // Grow-in: sphere scales from 5% → 100% over 900 ms
-  useEffect(() => {
-    const DURATION  = 900
-    const START     = 0.05
-    const startTime = performance.now()
-
-    function tick(now: number) {
-      const t    = Math.min(1, (now - startTime) / DURATION)
-      const ease = 1 - Math.pow(1 - t, 3)
-      setIntroScale(START + (1 - START) * ease)
-      if (t < 1) {
-        rafRef.current = requestAnimationFrame(tick)
-      } else {
-        setIntroScale(1)
-        rafRef.current = null
-      }
-    }
-
-    rafRef.current = requestAnimationFrame(tick)
-    return () => { if (rafRef.current !== null) cancelAnimationFrame(rafRef.current) }
   }, [])
 
   return (
@@ -89,14 +67,12 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
       {canvasMounted && (
         <div
           style={{
-            position:        "absolute",
-            top:             0,
-            left:            0,
-            width:           vpW,
-            height:          vpH,
-            transform:       `scale(${introScale})`,
-            transformOrigin: "50% 50%",
-            pointerEvents:   "none",
+            position:      "absolute",
+            top:           0,
+            left:          0,
+            width:         vpW,
+            height:        vpH,
+            pointerEvents: "none",
           }}
         >
           <Canvas

@@ -157,6 +157,16 @@ export default function SunSphere() {
 
     material.uniforms.uTime.value = state.clock.elapsedTime
 
+    // Intro grow-in: mesh scales from 5% → 100% over 0.9 s.
+    // Lives in the scene (not CSS) so the canvas wrapper never gets a transform
+    // that would shrink R3F's getBoundingClientRect() measurement at mount.
+    const INTRO_DURATION = 0.9
+    const INTRO_START    = 0.05
+    const it   = Math.min(1, state.clock.elapsedTime / INTRO_DURATION)
+    const ease = 1 - Math.pow(1 - it, 3)
+    const introScale = INTRO_START + (1 - INTRO_START) * ease
+    meshRef.current.scale.setScalar(introScale)
+
     const targetX = -pointerRef.current.y * 0.3
     const targetY =  pointerRef.current.x * 0.45
 
