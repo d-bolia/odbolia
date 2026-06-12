@@ -25,11 +25,21 @@ const WAVE_GRADIENT = [
   { color: "#EC4899", offset: 1    },
 ]
 
-// 4 equal-height sections → each occupies 1/3 of the total scroll range
-const S0 = 0
-const S1 = 1 / 3
-const S2 = 2 / 3
-const S3 = 1
+// Scroll-range layout (in progress units, 0 → 1):
+//   Hero OUTER is 200dvh tall (everyone else is 100dvh), so the hero-pinned
+//   phase splits in two: a hero-only sub-phase where the name/title text can
+//   fully exit, then the profile slide-in. Total document = 500dvh, scrollable
+//   range = 400dvh, mapped linearly to scrollYProgress.
+//
+//     0   ──────────── HERO_END (0.25) ──── S1 (0.5) ──── S2 (0.75) ──── S3 (1)
+//     │                  │                    │              │              │
+//     │ hero-only (text  │ profile slides     │ projects     │ contact      │
+//     │ exits here)      │ in over hero       │ slides in    │ slides in    │
+const S0       = 0
+const HERO_END = 0.25
+const S1       = 0.5
+const S2       = 0.75
+const S3       = 1
 
 // Outer sticky div: plain div — no transforms, so position:sticky works reliably.
 // Inner motion.div: carries the scroll-driven scale. Keeps transforms off the
@@ -41,6 +51,14 @@ const OUTER: React.CSSProperties = {
   height:   "100dvh",
   overflow: "hidden",
   background: "#0a0a0a",
+}
+
+// Hero is twice as tall so its sticky pin lasts an extra viewport-height —
+// that extra 100dvh of scroll is what the text exit owns, before the profile
+// section's flow position reaches the viewport bottom.
+const HERO_OUTER: React.CSSProperties = {
+  ...OUTER,
+  height: "200dvh",
 }
 
 const INNER: React.CSSProperties = {
@@ -60,13 +78,16 @@ export default function Home() {
   // ── Scroll-driven transforms ──────────────────────────────────────────────
   const { scrollYProgress } = useScroll()
 
-  const heroScale    = useTransform(scrollYProgress, [S0, S1], [1,     0.94])
-  const aboutScale   = useTransform(scrollYProgress, [S1, S2], [1,     0.94])
-  const projectScale = useTransform(scrollYProgress, [S2, S3], [1,     0.94])
+  // Hero scale/radius only animate during the profile slide-in window
+  // (HERO_END → S1) — during the prior hero-only sub-phase the hero stays
+  // at full size while the text exits.
+  const heroScale    = useTransform(scrollYProgress, [HERO_END, S1], [1,     0.94])
+  const aboutScale   = useTransform(scrollYProgress, [S1, S2],       [1,     0.94])
+  const projectScale = useTransform(scrollYProgress, [S2, S3],       [1,     0.94])
 
-  const heroRadius    = useTransform(scrollYProgress, [S0, S1], ["0px", "12px"])
-  const aboutRadius   = useTransform(scrollYProgress, [S1, S2], ["0px", "12px"])
-  const projectRadius = useTransform(scrollYProgress, [S2, S3], ["0px", "12px"])
+  const heroRadius    = useTransform(scrollYProgress, [HERO_END, S1], ["0px", "12px"])
+  const aboutRadius   = useTransform(scrollYProgress, [S1, S2],       ["0px", "12px"])
+  const projectRadius = useTransform(scrollYProgress, [S2, S3],       ["0px", "12px"])
 
   // Bar fades out in the last ~8% of each section's scroll range (as it docks at top)
   const aboutBarOpacity   = useTransform(scrollYProgress, [S1 - 0.08, S1], [1, 0])
@@ -78,14 +99,15 @@ export default function Home() {
 
   // ── pastHero / profileDocked: scroll-based (IO won't work on sticky-pinned)
   // pastHero      fires early (15% of vh) — drives Waves, FixedNav, Top button.
-  // profileDocked fires late  (85% of vh) — drives the mini sphere icon so it
-  //               only appears once the profile panel has slid into view.
+  // profileDocked fires late: profile docks at scrollY = 200vh now (hero pins
+  //               for 200dvh), so threshold moves to 185% of vh — fires just
+  //               before the profile finishes docking at the top.
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY
       const vh = window.innerHeight
       setPastHero(y > vh * 0.15)
-      setProfileDocked(y > vh * 0.85)
+      setProfileDocked(y > vh * 1.85)
     }
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
@@ -95,8 +117,8 @@ export default function Home() {
 
   return (
     <>
-      {/* ── Hero — sticky card 1 ─────────────────────────────────────────── */}
-      <div style={{ ...OUTER, zIndex: 1 }}>
+      {/* ── Hero — sticky card 1 (200dvh so text exit clears before profile) */}
+      <div style={{ ...HERO_OUTER, zIndex: 1 }}>
         <motion.div style={{ ...INNER, scale: heroScale, borderRadius: heroRadius }}>
           <HeroSection pastHero={pastHero} />
         </motion.div>

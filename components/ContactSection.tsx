@@ -59,23 +59,34 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
           margin: "0 auto",
         }}
       >
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            ...MONO,
-            fontWeight: 600,
-            fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)",
-            letterSpacing: "0.14em",
-            color: "#e8e8e8",
-            marginBottom: "3.5rem",
-            lineHeight: 1,
-          }}
+          style={{ marginBottom: "3.5rem", display: "inline-block" }}
         >
-          Contact
-        </motion.h2>
+          <h2
+            style={{
+              fontFamily:     "var(--font-display), var(--font-mono), sans-serif",
+              fontWeight:     700,
+              fontSize:       "clamp(1.4rem, 3.5vw, 2.8rem)",
+              letterSpacing:  "0.1em",
+              color:          "#e8e8e8",
+              lineHeight:     1,
+              textTransform:  "uppercase",
+              background:     "rgba(255,255,255,0.03)",
+              border:         "1px solid rgba(255,255,255,0.07)",
+              borderLeft:     "3px solid #EC4899",
+              borderRadius:   "0 4px 4px 0",
+              padding:        "0.6rem 1.4rem 0.6rem 1.2rem",
+              backdropFilter: "blur(12px)",
+              margin:         0,
+            }}
+          >
+            Contact
+          </h2>
+        </motion.div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <ContactLink
@@ -93,24 +104,6 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
             delay={0.25}
           />
         </div>
-
-        {/* Scroll hint */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          style={{
-            ...MONO,
-            fontWeight: 300,
-            fontSize: "0.62rem",
-            letterSpacing: "0.3em",
-            color: "rgba(232,232,232,0.18)",
-            marginTop: "6rem",
-          }}
-        >
-          Continue scrolling to loop
-        </motion.p>
       </div>
     </section>
   )

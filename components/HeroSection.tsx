@@ -53,12 +53,14 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
     return () => window.removeEventListener("resize", onResize)
   }, [])
 
-  // Scroll-driven exit for the name / title. Text translates up and fades out
-  // during the first ~10% of total scroll — ahead of the profile panel docking
-  // (which completes at scrollYProgress = 1/3) so it doesn't linger under it.
+  // Scroll-driven exit for the name / title. The hero pins for an extra 100dvh
+  // (HERO_END = 0.25 of progress in page.tsx) so the profile section doesn't
+  // enter the viewport until scrollYProgress > 0.25. We exit the text over
+  // [0, 0.2] with a small buffer, so it's fully gone before the profile becomes
+  // visible at all — strict sequential, no overlap.
   const { scrollYProgress } = useScroll()
-  const textY       = useTransform(scrollYProgress, [0, 0.1], [0,  -80])
-  const textOpacity = useTransform(scrollYProgress, [0, 0.1], [1,    0])
+  const textY       = useTransform(scrollYProgress, [0, 0.2], [0,  -80])
+  const textOpacity = useTransform(scrollYProgress, [0, 0.2], [1,    0])
 
   return (
     <main
