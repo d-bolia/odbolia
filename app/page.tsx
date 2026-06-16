@@ -78,14 +78,9 @@ export default function Home() {
   // ── Scroll-driven transforms ──────────────────────────────────────────────
   const { scrollYProgress } = useScroll()
 
-  // Hero scale/radius only animate during the profile slide-in window
-  // (HERO_END → S1) — during the prior hero-only sub-phase the hero stays
-  // at full size while the text exits.
-  const heroScale    = useTransform(scrollYProgress, [HERO_END, S1], [1,     0.94])
   const aboutScale   = useTransform(scrollYProgress, [S1, S2],       [1,     0.94])
   const projectScale = useTransform(scrollYProgress, [S2, S3],       [1,     0.94])
 
-  const heroRadius    = useTransform(scrollYProgress, [HERO_END, S1], ["0px", "12px"])
   const aboutRadius   = useTransform(scrollYProgress, [S1, S2],       ["0px", "12px"])
   const projectRadius = useTransform(scrollYProgress, [S2, S3],       ["0px", "12px"])
 
@@ -119,7 +114,7 @@ export default function Home() {
     <>
       {/* ── Hero — sticky card 1 (200dvh so text exit clears before profile) */}
       <div style={{ ...HERO_OUTER, zIndex: 1 }}>
-        <motion.div style={{ ...INNER, scale: heroScale, borderRadius: heroRadius }}>
+        <motion.div style={{ ...INNER }}>
           <HeroSection pastHero={pastHero} />
         </motion.div>
       </div>
