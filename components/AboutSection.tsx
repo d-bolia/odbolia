@@ -75,6 +75,18 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
         size={28}
       />
 
+      {/* Soft-edge backing — fades Waves behind content */}
+      <div
+        aria-hidden
+        style={{
+          position:      "absolute",
+          inset:         0,
+          background:    "radial-gradient(ellipse at center, #0a0a0a 0%, #0a0a0a 60%, transparent 100%)",
+          zIndex:        6,
+          pointerEvents: "none",
+        }}
+      />
+
       <div
         style={{
           position: "relative",
