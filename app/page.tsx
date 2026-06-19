@@ -113,14 +113,14 @@ export default function Home() {
   return (
     <>
       {/* ── Hero — sticky card 1 (200dvh so text exit clears before profile) */}
-      <div style={{ ...HERO_OUTER, zIndex: 1 }}>
+      <div style={{ ...HERO_OUTER, zIndex: 10 }}>
         <motion.div style={{ ...INNER }}>
           <HeroSection pastHero={pastHero} />
         </motion.div>
       </div>
 
       {/* ── Profile — sticky card 2 ───────────────────────────────────────── */}
-      <div style={{ ...OUTER, zIndex: 2 }}>
+      <div style={{ ...OUTER, zIndex: 20 }}>
         {/* Leading bar — visible while sliding up, fades once docked at top */}
         <motion.div
           aria-hidden
@@ -146,7 +146,7 @@ export default function Home() {
       </div>
 
       {/* ── Projects — sticky card 3 ──────────────────────────────────────── */}
-      <div style={{ ...OUTER, zIndex: 3 }}>
+      <div style={{ ...OUTER, zIndex: 30 }}>
         <motion.div
           aria-hidden
           style={{
@@ -167,7 +167,7 @@ export default function Home() {
       </div>
 
       {/* ── Contact — sticky card 4 (last, no scale-back) ─────────────────── */}
-      <div style={{ ...OUTER, zIndex: 4 }}>
+      <div style={{ ...OUTER, zIndex: 40 }}>
         <motion.div
           aria-hidden
           style={{
