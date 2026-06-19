@@ -80,12 +80,12 @@ const projectsData: Project[] = [
     tags: ["MATLAB", "Simulink", "Signal Processing", "Data Analysis", "Modeling", "Simulation"],
     github: null,
     images: [
-      "/images/projects/matlab-acRC-scope.png",
       "/images/projects/matlab-acRC-sig.png",
-      "/images/projects/matlab-delta-scope.png",
+      "/images/projects/matlab-acRC-scope.png",
       "/images/projects/matlab-delta-sig.png",
-      "/images/projects/matlab-yconfig-scope.png",
+      "/images/projects/matlab-delta-scope.png",
       "/images/projects/matlab-yconfig-sig.png",
+      "/images/projects/matlab-yconfig-scope.png",
     ],
   },
 ]
