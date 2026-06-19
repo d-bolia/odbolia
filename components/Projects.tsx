@@ -362,21 +362,6 @@ export default function Projects() {
         position:      "relative",
       }}
     >
-      {/* Soft-edge backing — fades Waves behind content */}
-      <div
-        aria-hidden
-        style={{
-          position:      "absolute",
-          inset:         0,
-          background:    "radial-gradient(ellipse at center, #0a0a0a 0%, #0a0a0a 60%, transparent 100%)",
-          zIndex:        6,
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Content wrapper — above the wave-backing */}
-      <div style={{ position: "relative", zIndex: 7, display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{ padding: "2.5rem clamp(2rem, 6vw, 6rem) 1.25rem", flexShrink: 0 }}>
         <h2
@@ -713,7 +698,6 @@ export default function Projects() {
           </AnimatePresence>
         </div>
       </div>
-      </div>{/* end content wrapper */}
     </section>
   )
 }
