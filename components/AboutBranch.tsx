@@ -247,7 +247,7 @@ export default function AboutBranch() {
                 fontWeight:    400,
                 fontSize:      "clamp(0.74rem, 1.05vw, 0.84rem)",
                 letterSpacing: "0.04em",
-                color:         "rgba(232,232,232,0.6)",
+                color:         "#e8e8e8",
                 marginBottom:  "0.75rem",
               }}
             >
@@ -260,7 +260,7 @@ export default function AboutBranch() {
                 fontFamily:    "var(--font-mono), monospace",
                 fontWeight:    300,
                 fontSize:      "clamp(0.72rem, 1vw, 0.82rem)",
-                color:         "rgba(232,232,232,0.45)",
+                color:         "#e8e8e8",
                 lineHeight:    1.8,
                 marginBottom:  entry.context ? "0.75rem" : 0,
               }}
@@ -290,7 +290,7 @@ export default function AboutBranch() {
                     fontWeight:  300,
                     fontSize:    "clamp(0.72rem, 1vw, 0.82rem)",
                     fontStyle:   "italic",
-                    color:       "rgba(232,232,232,0.32)",
+                    color:       "#a3a3a3",
                     lineHeight:  1.8,
                     borderLeft:  "1px solid rgba(232,232,232,0.08)",
                     paddingLeft: "0.75rem",

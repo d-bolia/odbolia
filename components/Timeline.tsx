@@ -407,7 +407,7 @@ export default function Timeline() {
                   fontFamily: "var(--font-mono), monospace",
                   fontWeight: 300,
                   fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                  color: "rgba(255,255,255,0.8)",
+                  color: "#e8e8e8",
                   lineHeight: 1.85,
                   margin: 0,
                 }}
@@ -504,7 +504,7 @@ export default function Timeline() {
                         fontFamily: "var(--font-mono), monospace",
                         fontWeight: 300,
                         fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                        color: "rgba(255,255,255,0.8)",
+                        color: "#e8e8e8",
                         lineHeight: 1.85,
                         margin: 0,
                       }}

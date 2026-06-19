@@ -86,23 +86,34 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
         }}
       >
         {/* Heading */}
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            ...MONO,
-            fontWeight: 600,
-            fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)",
-            letterSpacing: "0.14em",
-            color: "#e8e8e8",
-            marginBottom: "3rem",
-            lineHeight: 1,
-          }}
+          style={{ marginBottom: "3rem", display: "inline-block" }}
         >
-          Profile
-        </motion.h2>
+          <h2
+            style={{
+              fontFamily:     "var(--font-display), var(--font-mono), sans-serif",
+              fontWeight:     700,
+              fontSize:       "clamp(1.4rem, 3.5vw, 2.8rem)",
+              letterSpacing:  "0.1em",
+              color:          "#e8e8e8",
+              lineHeight:     1,
+              textTransform:  "uppercase",
+              background:     "rgba(255,255,255,0.03)",
+              border:         "1px solid rgba(255,255,255,0.07)",
+              borderLeft:     "3px solid #06B6D4",
+              borderRadius:   "0 4px 4px 0",
+              padding:        "0.6rem 1.4rem 0.6rem 1.2rem",
+              backdropFilter: "blur(12px)",
+              margin:         0,
+            }}
+          >
+            Profile
+          </h2>
+        </motion.div>
 
         {/* Bio */}
         <motion.p
@@ -114,7 +125,7 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
             fontFamily: "var(--font-mono), monospace",
             fontWeight: 300,
             fontSize: "clamp(0.88rem, 1.4vw, 1.05rem)",
-            color: "rgba(232,232,232,0.65)",
+            color: "#e8e8e8",
             lineHeight: 1.9,
             maxWidth: 720,
             marginBottom: "5rem",

@@ -76,7 +76,7 @@ export default function ProjectBranch({ projectId }: { projectId: string }) {
           fontFamily: "var(--font-mono), monospace",
           fontWeight: 300,
           fontSize: "clamp(0.9rem, 1.3vw, 1.05rem)",
-          color: "rgba(232,232,232,0.6)",
+          color: "#e8e8e8",
           lineHeight: 1.85,
           maxWidth: 680,
         }}
