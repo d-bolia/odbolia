@@ -102,12 +102,11 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
               color:          "#e8e8e8",
               lineHeight:     1,
               textTransform:  "uppercase",
-              background:     "rgba(255,255,255,0.03)",
+              background:     "#0a0a0a",
               border:         "1px solid rgba(255,255,255,0.07)",
               borderLeft:     "3px solid #06B6D4",
               borderRadius:   "0 4px 4px 0",
               padding:        "0.6rem 1.4rem 0.6rem 1.2rem",
-              backdropFilter: "blur(12px)",
               margin:         0,
             }}
           >
