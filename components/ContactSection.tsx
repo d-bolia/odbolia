@@ -68,8 +68,8 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
         >
           <h2
             style={{
-              fontFamily:     "var(--font-display), var(--font-mono), sans-serif",
-              fontWeight:     700,
+              fontFamily:     "var(--font-chakra), sans-serif",
+              fontWeight:     500,
               fontSize:       "clamp(1.4rem, 3.5vw, 2.8rem)",
               letterSpacing:  "0.1em",
               color:          "#e8e8e8",
@@ -147,10 +147,10 @@ function ContactLink({
       <span>{icon}</span>
       <span
         style={{
-          fontFamily: "var(--font-mono), monospace",
-          fontWeight: 300,
+          fontFamily: "var(--font-fraunces), serif",
+          fontWeight: 400,
           fontSize: "clamp(0.85rem, 1.5vw, 1.1rem)",
-          letterSpacing: "0.08em",
+          letterSpacing: "0.04em",
         }}
       >
         {handle}

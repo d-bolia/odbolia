@@ -293,7 +293,7 @@ export default function Timeline() {
                   y={isLong ? pos.y - 12 : pos.y - 5}
                   textAnchor={anchor}
                   fill={textFill}
-                  fontFamily="var(--font-display), var(--font-mono), sans-serif"
+                  fontFamily="var(--font-chakra), sans-serif"
                   fontWeight={isActive ? 700 : 400}
                   fontSize={18}
                   style={{ transition: "fill 0.3s ease" }}
@@ -306,7 +306,7 @@ export default function Timeline() {
                     y={pos.y + 14}
                     textAnchor={anchor}
                     fill={textFill}
-                    fontFamily="var(--font-display), var(--font-mono), sans-serif"
+                    fontFamily="var(--font-chakra), sans-serif"
                     fontWeight={isActive ? 700 : 400}
                     fontSize={18}
                     style={{ transition: "fill 0.3s ease" }}
@@ -319,7 +319,7 @@ export default function Timeline() {
                   y={isLong ? pos.y + 36 : pos.y + 19}
                   textAnchor={anchor}
                   fill="rgba(107,114,128,0.65)"
-                  fontFamily="var(--font-mono), monospace"
+                  fontFamily="var(--font-inter), sans-serif"
                   fontSize={12}
                 >
                   {timelineData[i].dates}
@@ -363,8 +363,8 @@ export default function Timeline() {
               {/* Organization */}
               <h3
                 style={{
-                  fontFamily: "var(--font-display), var(--font-mono), sans-serif",
-                  fontWeight: 700,
+                  fontFamily: "var(--font-chakra), sans-serif",
+                  fontWeight: 500,
                   fontSize: "clamp(1.1rem, 2.5vw, 1.55rem)",
                   color: "#60a5fa",
                   marginBottom: "0.3rem",
@@ -377,7 +377,7 @@ export default function Timeline() {
               {/* Dates + location */}
               <p
                 style={{
-                  fontFamily: "var(--font-mono), monospace",
+                  fontFamily: "var(--font-inter), sans-serif",
                   fontSize: "0.7rem",
                   letterSpacing: "0.05em",
                   color: "#6b7280",
@@ -390,8 +390,8 @@ export default function Timeline() {
               {/* Role */}
               <p
                 style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontWeight: 500,
+                  fontFamily: "var(--font-fraunces), serif",
+                  fontWeight: 400,
                   fontSize: "clamp(0.78rem, 1.1vw, 0.9rem)",
                   color: "#ffffff",
                   lineHeight: 1.5,
@@ -404,8 +404,8 @@ export default function Timeline() {
               {/* Description */}
               <p
                 style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontWeight: 300,
+                  fontFamily: "var(--font-fraunces), serif",
+                  fontWeight: 400,
                   fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
                   color: "#e8e8e8",
                   lineHeight: 1.85,
@@ -419,8 +419,8 @@ export default function Timeline() {
               {entry.context && (
                 <p
                   style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontWeight: 300,
+                    fontFamily: "var(--font-fraunces), serif",
+                    fontWeight: 400,
                     fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
                     fontStyle: "italic",
                     color: isPlaceholder ? "#F59E0B" : "#a3a3a3",
@@ -463,7 +463,8 @@ export default function Timeline() {
                       />
                       <span
                         style={{
-                          fontFamily: "var(--font-mono), monospace",
+                          fontFamily: "var(--font-chakra), sans-serif",
+                          fontWeight: 500,
                           fontSize: "0.6rem",
                           letterSpacing: "0.18em",
                           textTransform: "uppercase",
@@ -476,8 +477,8 @@ export default function Timeline() {
 
                     <h4
                       style={{
-                        fontFamily: "var(--font-display), var(--font-mono), sans-serif",
-                        fontWeight: 700,
+                        fontFamily: "var(--font-chakra), sans-serif",
+                        fontWeight: 500,
                         fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
                         color: "#22c55e",
                         marginBottom: "0.3rem",
@@ -489,7 +490,7 @@ export default function Timeline() {
 
                     <p
                       style={{
-                        fontFamily: "var(--font-mono), monospace",
+                        fontFamily: "var(--font-inter), sans-serif",
                         fontSize: "0.7rem",
                         color: "#6b7280",
                         margin: "0 0 0.85rem",
@@ -501,8 +502,8 @@ export default function Timeline() {
 
                     <p
                       style={{
-                        fontFamily: "var(--font-mono), monospace",
-                        fontWeight: 300,
+                        fontFamily: "var(--font-fraunces), serif",
+                        fontWeight: 400,
                         fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
                         color: "#e8e8e8",
                         lineHeight: 1.85,
@@ -515,8 +516,8 @@ export default function Timeline() {
                     {sub.context && (
                       <p
                         style={{
-                          fontFamily: "var(--font-mono), monospace",
-                          fontWeight: 300,
+                          fontFamily: "var(--font-fraunces), serif",
+                          fontWeight: 400,
                           fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
                           fontStyle: "italic",
                           color: subIsPlaceholder ? "#F59E0B" : "#a3a3a3",

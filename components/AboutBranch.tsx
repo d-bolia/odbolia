@@ -139,8 +139,8 @@ export default function AboutBranch() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          fontFamily:    "var(--font-display), var(--font-mono), sans-serif",
-          fontWeight:    700,
+          fontFamily:    "var(--font-chakra), sans-serif",
+          fontWeight:    500,
           fontSize:      "clamp(1.1rem, 2.5vw, 1.8rem)",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
@@ -215,8 +215,8 @@ export default function AboutBranch() {
             >
               <p
                 style={{
-                  fontFamily:    "var(--font-display), var(--font-mono), sans-serif",
-                  fontWeight:    700,
+                  fontFamily:    "var(--font-chakra), sans-serif",
+                  fontWeight:    500,
                   fontSize:      "clamp(0.78rem, 1.2vw, 0.92rem)",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
@@ -228,10 +228,10 @@ export default function AboutBranch() {
               </p>
               <p
                 style={{
-                  fontFamily:    "var(--font-mono), monospace",
-                  fontWeight:    300,
+                  fontFamily:    "var(--font-inter), sans-serif",
+                  fontWeight:    400,
                   fontSize:      "0.7rem",
-                  letterSpacing: "0.06em",
+                  letterSpacing: "0.04em",
                   color:         "rgba(232,232,232,0.35)",
                   margin:        0,
                 }}
@@ -243,10 +243,10 @@ export default function AboutBranch() {
             {/* Role */}
             <p
               style={{
-                fontFamily:    "var(--font-mono), monospace",
+                fontFamily:    "var(--font-fraunces), serif",
                 fontWeight:    400,
                 fontSize:      "clamp(0.74rem, 1.05vw, 0.84rem)",
-                letterSpacing: "0.04em",
+                letterSpacing: "0.02em",
                 color:         "#e8e8e8",
                 marginBottom:  "0.75rem",
               }}
@@ -257,8 +257,8 @@ export default function AboutBranch() {
             {/* Description */}
             <p
               style={{
-                fontFamily:    "var(--font-mono), monospace",
-                fontWeight:    300,
+                fontFamily:    "var(--font-fraunces), serif",
+                fontWeight:    400,
                 fontSize:      "clamp(0.72rem, 1vw, 0.82rem)",
                 color:         "#e8e8e8",
                 lineHeight:    1.8,
@@ -273,8 +273,8 @@ export default function AboutBranch() {
               isPlaceholder(entry.context) ? (
                 <p
                   style={{
-                    fontFamily:  "var(--font-mono), monospace",
-                    fontWeight:  300,
+                    fontFamily:  "var(--font-fraunces), serif",
+                    fontWeight:  400,
                     fontSize:    "clamp(0.72rem, 1vw, 0.82rem)",
                     fontStyle:   "italic",
                     color:       "#F59E0B",
@@ -286,8 +286,8 @@ export default function AboutBranch() {
               ) : (
                 <p
                   style={{
-                    fontFamily:  "var(--font-mono), monospace",
-                    fontWeight:  300,
+                    fontFamily:  "var(--font-fraunces), serif",
+                    fontWeight:  400,
                     fontSize:    "clamp(0.72rem, 1vw, 0.82rem)",
                     fontStyle:   "italic",
                     color:       "#a3a3a3",

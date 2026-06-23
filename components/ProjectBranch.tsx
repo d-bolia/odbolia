@@ -38,7 +38,7 @@ export default function ProjectBranch({ projectId }: { projectId: string }) {
     <div>
       <h2
         style={{
-          fontFamily: "var(--font-mono), monospace",
+          fontFamily: "var(--font-chakra), sans-serif",
           fontWeight: 600,
           fontSize: "clamp(1.2rem, 3vw, 2rem)",
           letterSpacing: "0.14em",
@@ -56,9 +56,9 @@ export default function ProjectBranch({ projectId }: { projectId: string }) {
           <span
             key={tag}
             style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: "0.65rem",
-              letterSpacing: "0.18em",
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.72rem",
+              letterSpacing: "0.06em",
               textTransform: "uppercase",
               color: "rgba(232,232,232,0.5)",
               border: "1px solid rgba(232,232,232,0.15)",
@@ -73,8 +73,8 @@ export default function ProjectBranch({ projectId }: { projectId: string }) {
 
       <p
         style={{
-          fontFamily: "var(--font-mono), monospace",
-          fontWeight: 300,
+          fontFamily: "var(--font-fraunces), serif",
+          fontWeight: 400,
           fontSize: "clamp(0.9rem, 1.3vw, 1.05rem)",
           color: "#e8e8e8",
           lineHeight: 1.85,
@@ -95,7 +95,7 @@ export default function ProjectBranch({ projectId }: { projectId: string }) {
           alignItems: "center",
           justifyContent: "center",
           color: "rgba(232,232,232,0.2)",
-          fontFamily: "var(--font-mono), monospace",
+          fontFamily: "var(--font-inter), sans-serif",
           fontSize: "0.7rem",
           letterSpacing: "0.2em",
           textTransform: "uppercase",

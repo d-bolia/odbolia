@@ -366,8 +366,8 @@ export default function Projects() {
       <div style={{ padding: "2.5rem clamp(2rem, 6vw, 6rem) 1.25rem", flexShrink: 0 }}>
         <h2
           style={{
-            fontFamily:     "var(--font-display), var(--font-mono), sans-serif",
-            fontWeight:     700,
+            fontFamily:     "var(--font-chakra), sans-serif",
+            fontWeight:     500,
             fontSize:       "clamp(1.1rem, 2.2vw, 1.8rem)",
             letterSpacing:  "0.1em",
             color:          "#ffffff",
@@ -451,8 +451,8 @@ export default function Projects() {
                 <span
                   key={isActive ? `active-${glitchKey}` : `inactive-${p.id}`}
                   style={{
-                    fontFamily:    "var(--font-display), var(--font-mono), sans-serif",
-                    fontWeight:    isActive ? 700 : 400,
+                    fontFamily:    "var(--font-chakra), sans-serif",
+                    fontWeight:    isActive ? 600 : 400,
                     fontSize:      "clamp(0.72rem, 1.1vw, 0.9rem)",
                     letterSpacing: "0.07em",
                     textTransform: "uppercase",
@@ -497,7 +497,7 @@ export default function Projects() {
               <div style={{ flexShrink: 0 }}>
                 <p
                   style={{
-                    fontFamily:    "var(--font-mono), monospace",
+                    fontFamily:    "var(--font-chakra), sans-serif",
                     fontSize:      "0.62rem",
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
@@ -509,8 +509,8 @@ export default function Projects() {
                 </p>
                 <h3
                   style={{
-                    fontFamily:            "var(--font-display), var(--font-mono), sans-serif",
-                    fontWeight:            700,
+                    fontFamily:            "var(--font-chakra), sans-serif",
+                    fontWeight:            600,
                     fontSize:              "clamp(1.4rem, 3.5vw, 2.8rem)",
                     letterSpacing:         "0.05em",
                     textTransform:         "uppercase",
@@ -632,8 +632,8 @@ export default function Projects() {
               {/* Description */}
               <p
                 style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontWeight: 300,
+                  fontFamily: "var(--font-fraunces), serif",
+                  fontWeight: 400,
                   fontSize:   "clamp(0.7rem, 0.92vw, 0.82rem)",
                   color:      "#ffffff",
                   lineHeight: 1.82,
@@ -650,9 +650,9 @@ export default function Projects() {
                   <span
                     key={tag}
                     style={{
-                      fontFamily:   "var(--font-mono), monospace",
-                      fontSize:     "0.6rem",
-                      letterSpacing: "0.05em",
+                      fontFamily:   "var(--font-inter), sans-serif",
+                      fontSize:     "0.72rem",
+                      letterSpacing: "0.02em",
                       color:        "#c084fc",
                       background:   "rgba(192,132,252,0.07)",
                       border:       "1px solid rgba(192,132,252,0.18)",
@@ -676,7 +676,8 @@ export default function Projects() {
                       display:        "inline-flex",
                       alignItems:     "center",
                       gap:            7,
-                      fontFamily:     "var(--font-mono), monospace",
+                      fontFamily:     "var(--font-inter), sans-serif",
+                      fontWeight:     500,
                       fontSize:       "0.72rem",
                       letterSpacing:  "0.06em",
                       color:          "#c084fc",

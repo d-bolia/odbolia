@@ -1,12 +1,35 @@
 import type { Metadata } from "next"
-import { Geist_Mono } from "next/font/google"
+import { Geist_Mono, Space_Grotesk, Chakra_Petch, Fraunces, Inter } from "next/font/google"
 import "./globals.css"
 
-// Geist Mono — variable font (100–900), rounded terminals, geometric
-// Closest freely available match to Proto Mono's aesthetic
 const geistMono = Geist_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+})
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+})
+
+const chakraPetch = Chakra_Petch({
+  variable: "--font-chakra",
+  subsets: ["latin"],
+  weight: ["500", "600"],
+})
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+})
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 })
 
 export const metadata: Metadata = {
@@ -19,7 +42,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={geistMono.variable}>
+    <html lang="en" className={`${geistMono.variable} ${spaceGrotesk.variable} ${chakraPetch.variable} ${fraunces.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   )

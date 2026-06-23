@@ -30,10 +30,10 @@ body {
   font-size: 16px;
 }
 
-/* Section headings: Space Grotesk bold for strong visual contrast */
+/* Section headings: Chakra Petch for technical, engineered aesthetic */
 h1, h2 {
-  font-family: var(--font-display), var(--font-mono), sans-serif;
-  font-weight: 700;
+  font-family: var(--font-chakra), var(--font-display), sans-serif;
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.1;

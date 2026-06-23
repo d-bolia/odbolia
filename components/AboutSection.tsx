@@ -95,8 +95,8 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
         >
           <h2
             style={{
-              fontFamily:     "var(--font-display), var(--font-mono), sans-serif",
-              fontWeight:     700,
+              fontFamily:     "var(--font-chakra), sans-serif",
+              fontWeight:     500,
               fontSize:       "clamp(1.4rem, 3.5vw, 2.8rem)",
               letterSpacing:  "0.1em",
               color:          "#e8e8e8",
@@ -121,11 +121,11 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            fontFamily: "var(--font-mono), monospace",
-            fontWeight: 300,
-            fontSize: "clamp(0.88rem, 1.4vw, 1.05rem)",
+            fontFamily: "var(--font-fraunces), serif",
+            fontWeight: 400,
+            fontSize: "clamp(1rem, 1.4vw, 1.0625rem)",
             color: "#e8e8e8",
-            lineHeight: 1.9,
+            lineHeight: 1.65,
             maxWidth: 720,
             marginBottom: "5rem",
           }}

@@ -146,9 +146,9 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
         >
           <h1
             style={{
-              fontFamily:    "var(--font-mono), monospace",
+              fontFamily:    "var(--font-chakra), sans-serif",
               textTransform: "uppercase",
-              fontWeight:    700,
+              fontWeight:    600,
               fontSize:      "clamp(1.6rem, 3.5vw, 3rem)",
               letterSpacing: "0.12em",
               lineHeight:    1,
@@ -161,9 +161,9 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
           </h1>
           <p
             style={{
-              fontFamily:    "var(--font-mono), monospace",
+              fontFamily:    "var(--font-chakra), sans-serif",
               textTransform: "uppercase",
-              fontWeight:    300,
+              fontWeight:    600,
               fontSize:      "clamp(0.65rem, 1.2vw, 0.95rem)",
               letterSpacing: "0.38em",
               color:         "rgba(232,232,232,0.4)",

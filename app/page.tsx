@@ -276,9 +276,10 @@ export default function Home() {
               border:         "1px solid rgba(244,114,182,0.3)",
               borderRadius:   8,
               color:          "#f472b6",
-              fontFamily:     "var(--font-mono), monospace",
+              fontFamily:     "var(--font-inter), sans-serif",
+              fontWeight:     500,
               fontSize:       "0.72rem",
-              letterSpacing:  "0.1em",
+              letterSpacing:  "0.06em",
               cursor:         "pointer",
               backdropFilter: "blur(6px)",
             }}
