@@ -73,7 +73,7 @@ export default function ProjectBranch({ projectId }: { projectId: string }) {
 
       <p
         style={{
-          fontFamily: "var(--font-fraunces), serif",
+          fontFamily: "var(--font-dmsans), sans-serif",
           fontWeight: 400,
           fontSize: "clamp(0.9rem, 1.3vw, 1.05rem)",
           color: "#e8e8e8",

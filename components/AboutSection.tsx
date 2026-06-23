@@ -121,7 +121,7 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            fontFamily: "var(--font-fraunces), serif",
+            fontFamily: "var(--font-dmsans), sans-serif",
             fontWeight: 400,
             fontSize: "clamp(1rem, 1.4vw, 1.0625rem)",
             color: "#e8e8e8",

@@ -147,7 +147,7 @@ function ContactLink({
       <span>{icon}</span>
       <span
         style={{
-          fontFamily: "var(--font-fraunces), serif",
+          fontFamily: "var(--font-dmsans), sans-serif",
           fontWeight: 400,
           fontSize: "clamp(0.85rem, 1.5vw, 1.1rem)",
           letterSpacing: "0.04em",

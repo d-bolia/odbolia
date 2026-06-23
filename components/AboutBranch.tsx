@@ -243,7 +243,7 @@ export default function AboutBranch() {
             {/* Role */}
             <p
               style={{
-                fontFamily:    "var(--font-fraunces), serif",
+                fontFamily:    "var(--font-dmsans), sans-serif",
                 fontWeight:    400,
                 fontSize:      "clamp(0.74rem, 1.05vw, 0.84rem)",
                 letterSpacing: "0.02em",
@@ -257,7 +257,7 @@ export default function AboutBranch() {
             {/* Description */}
             <p
               style={{
-                fontFamily:    "var(--font-fraunces), serif",
+                fontFamily:    "var(--font-dmsans), sans-serif",
                 fontWeight:    400,
                 fontSize:      "clamp(0.72rem, 1vw, 0.82rem)",
                 color:         "#e8e8e8",
@@ -273,10 +273,9 @@ export default function AboutBranch() {
               isPlaceholder(entry.context) ? (
                 <p
                   style={{
-                    fontFamily:  "var(--font-fraunces), serif",
+                    fontFamily:  "var(--font-dmsans), sans-serif",
                     fontWeight:  400,
                     fontSize:    "clamp(0.72rem, 1vw, 0.82rem)",
-                    fontStyle:   "italic",
                     color:       "#F59E0B",
                     lineHeight:  1.8,
                   }}
@@ -286,10 +285,9 @@ export default function AboutBranch() {
               ) : (
                 <p
                   style={{
-                    fontFamily:  "var(--font-fraunces), serif",
+                    fontFamily:  "var(--font-dmsans), sans-serif",
                     fontWeight:  400,
                     fontSize:    "clamp(0.72rem, 1vw, 0.82rem)",
-                    fontStyle:   "italic",
                     color:       "#a3a3a3",
                     lineHeight:  1.8,
                     borderLeft:  "1px solid rgba(232,232,232,0.08)",

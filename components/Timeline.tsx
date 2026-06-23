@@ -390,7 +390,7 @@ export default function Timeline() {
               {/* Role */}
               <p
                 style={{
-                  fontFamily: "var(--font-fraunces), serif",
+                  fontFamily: "var(--font-dmsans), sans-serif",
                   fontWeight: 400,
                   fontSize: "clamp(0.78rem, 1.1vw, 0.9rem)",
                   color: "#ffffff",
@@ -404,7 +404,7 @@ export default function Timeline() {
               {/* Description */}
               <p
                 style={{
-                  fontFamily: "var(--font-fraunces), serif",
+                  fontFamily: "var(--font-dmsans), sans-serif",
                   fontWeight: 400,
                   fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
                   color: "#e8e8e8",
@@ -419,10 +419,9 @@ export default function Timeline() {
               {entry.context && (
                 <p
                   style={{
-                    fontFamily: "var(--font-fraunces), serif",
+                    fontFamily: "var(--font-dmsans), sans-serif",
                     fontWeight: 400,
                     fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                    fontStyle: "italic",
                     color: isPlaceholder ? "#F59E0B" : "#a3a3a3",
                     lineHeight: 1.85,
                     margin: "0.75rem 0 0",
@@ -502,7 +501,7 @@ export default function Timeline() {
 
                     <p
                       style={{
-                        fontFamily: "var(--font-fraunces), serif",
+                        fontFamily: "var(--font-dmsans), sans-serif",
                         fontWeight: 400,
                         fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
                         color: "#e8e8e8",
@@ -516,10 +515,9 @@ export default function Timeline() {
                     {sub.context && (
                       <p
                         style={{
-                          fontFamily: "var(--font-fraunces), serif",
+                          fontFamily: "var(--font-dmsans), sans-serif",
                           fontWeight: 400,
                           fontSize: "clamp(0.72rem, 1vw, 0.82rem)",
-                          fontStyle: "italic",
                           color: subIsPlaceholder ? "#F59E0B" : "#a3a3a3",
                           lineHeight: 1.85,
                           margin: "0.75rem 0 0",

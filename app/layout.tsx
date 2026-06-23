@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist_Mono, Space_Grotesk, Chakra_Petch, Fraunces, Inter } from "next/font/google"
+import { Geist_Mono, Space_Grotesk, Chakra_Petch, DM_Sans, Inter } from "next/font/google"
 import "./globals.css"
 
 const geistMono = Geist_Mono({
@@ -19,11 +19,10 @@ const chakraPetch = Chakra_Petch({
   weight: ["500", "600"],
 })
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const dmSans = DM_Sans({
+  variable: "--font-dmsans",
   subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
+  weight: ["400", "500"],
 })
 
 const inter = Inter({
@@ -42,7 +41,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistMono.variable} ${spaceGrotesk.variable} ${chakraPetch.variable} ${fraunces.variable} ${inter.variable}`}>
+    <html lang="en" className={`${geistMono.variable} ${spaceGrotesk.variable} ${chakraPetch.variable} ${dmSans.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   )

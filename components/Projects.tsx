@@ -632,7 +632,7 @@ export default function Projects() {
               {/* Description */}
               <p
                 style={{
-                  fontFamily: "var(--font-fraunces), serif",
+                  fontFamily: "var(--font-dmsans), sans-serif",
                   fontWeight: 400,
                   fontSize:   "clamp(0.7rem, 0.92vw, 0.82rem)",
                   color:      "#ffffff",
