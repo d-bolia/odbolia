@@ -43,7 +43,8 @@
       "Bash(node .scratch-verify.mjs)",
       "Bash(mkdir -p \"C:/Users/desmo/Desktop/odbolia/.scratch-shots2\")",
       "Bash(node .scratch-verify2.mjs)",
-      "Bash(node .scratch-console.mjs)"
+      "Bash(node .scratch-console.mjs)",
+      "Bash(git fetch *)"
     ]
   }
 }

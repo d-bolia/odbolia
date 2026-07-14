@@ -37,7 +37,7 @@ const timelineData: TimelineEntry[] = [
       role: "Hardware & Systems Engineer — Senior Design Capstone",
       description:
         "Designed and integrated a fiber-optic-tethered autonomous quadcopter platform for operation in RF-denied and GPS-degraded environments, enabling resilient navigation and communication without wireless dependency. Developed MAVLink telemetry pipeline and onboard AI inference engine achieving 75% object detection accuracy during controlled flight demonstrations exceeding 20 minutes of sustained operation. Performed notch filter analysis of flight log data in MATLAB and ArduPilot to identify noise sources in the control loop; optimized PID gains improving closed-loop stability and dynamic response by ~12%. Executed hardware integration and 3D modeling in SolidWorks. Dean's Award Recipient.",
-      context: "PLACEHOLDER — Desmond to write",
+      context: null,
     },
   },
   {
@@ -50,7 +50,7 @@ const timelineData: TimelineEntry[] = [
     description:
       "Beachcomber Cafe (Crystal Cove) · South of Nick's (Laguna Beach) · R+D Kitchen (Newport Beach)",
     context:
-      "Since attending UCI, I've put myself through school working in the restaurant industry — finding roles where I could earn enough to sustain myself while maintaining a schedule that kept my studies first. Despite forgoing internships in the interest of financial stability, working in service has sharpened communication under pressure, teamwork, and attention to detail in ways a classroom rarely does.",
+      "Since attending UCI, I've put myself through school working in the restaurant industry — finding roles where I could earn enough to sustain myself while maintaining a schedule that kept my studies first. Despite forgoing internships in the interest of financial stability, working in service has sharpened communication under pressure, teamwork, and attention to detail in a manner that has built up grit and determination.",
   },
   {
     id: 3,
@@ -62,7 +62,7 @@ const timelineData: TimelineEntry[] = [
     description:
       "Cross-functional coordination across multiple departments contributing to 57% average YoY revenue growth over four years. Executed technical drawings, layouts, and client-facing presentations with the design team. Developed inventory management protocols improving operational accuracy and throughput.",
     context:
-      "When I decided to go back to school for electrical engineering, I needed community college first — and a job with a flexible schedule. I found a remarkable team at RH. To this day, my coworkers and leadership were among the most capable, committed people I've worked alongside. The role kept my CAD skills sharp, honed my operations awareness, and let me learn from supervisors who modeled the kind of culture and execution that actually accomplishes things.",
+      "When I decided to go back to school for electrical engineering, I needed community college first — and a job with a flexible schedule. I found a remarkable team at RH. To this day, my coworkers and leadership were among the most capable, committed people I've worked alongside. The role kept my CAD skills sharp, honed my operations awareness, and allowed me to learn from supervisors who modeled the culture and execution that embody how to set and achieve desired outcomes in a growth focused business model.",
   },
   {
     id: 4,
@@ -74,7 +74,7 @@ const timelineData: TimelineEntry[] = [
     description:
       "End-to-end fabrication, assembly, and installation of custom cabinetry. Operated 5-axis CNC, edge bander, and plasma laser cutter to produce components with tight tolerances and high repeatability.",
     context:
-      "A short foray intended to bridge work with a technical discipline — to see what engineering means at the production level. Working with my hands, running CNC, and assisting with bids and technical drawings was a great supplement to getting back into school. When it came time to prioritize coursework, the M-F 8-4 schedule made the choice for me.",
+      "A short foray intended to bridge work with a technical discipline and to see what engineering means at the production level. Working with my hands, running CNC, and assisting with bids and technical drawings was a great supplement to getting back into school. When it came time to prioritize coursework, the M-F 8-4 schedule was incompatible with my school schedule, and I transitioned to RH.",
   },
   {
     id: 5,
@@ -91,6 +91,18 @@ const timelineData: TimelineEntry[] = [
   {
     id: 6,
     type: "experience",
+    organization: "Helix Electric, Inc.",
+    role: "Project Engineer",
+    dates: "Apr 2017 – Aug 2018",
+    location: "Oakland, CA",
+    description:
+      "As a Project Engineer at Helix Electric, I coordinated scope, schedule, and budget across commercial, residential high-rise, and tenant improvement projects, bridging field crews and management to keep implementation on track. I worked hands-on with Autodesk Suite (AutoCAD, Revit, Navisworks) for design coordination and construction documentation, and operated TOPCON and Trimble GNSS equipment for field verification. I also built an Excel/Bluebeam-integrated tracking process that was adopted as the department standard, streamlining labor hour tracking, materials procurement, and budget forecasting — while supporting monthly invoicing cycles and change order negotiations to keep projects compliant and on schedule.",
+    context:
+      "Helix Electric is the catalyst for my journey to electrical engineering. As a Project Engineer in a construction management environment, I was able to blend the technicality of the field and the business requirements of the office. On the management side, I learned the importance of scheduling, labor, negotiation, and coordination with other trades. It taught me that projects cannot be built in a vacuum, and that efficiency, effective communication, and documentation are crucial to a thriving business. The field was what set my goal on engineering - I learned how to read and interpret technical drawings, work through cut sheets to define product specifications within scope, how to plan and implement material with labor in mind. I was able to learn CAD tools to develop prefabricated assemblies, routing changes, and utilize engineering principles to discover cheaper alternatives to overengineered plans. Throughout this, though, I was always coordinating with a licensed engineer, and I was enamored by their workflow and proficiency. I knew that what I wanted was to be able to find these solutions and build them as an engineer, and from there I began my journey to school. I went to Caliber Academy to make sure there were no doubts about my choice, and haven't looked back since.",
+  },
+  {
+    id: 7,
+    type: "experience",
     organization: "Rustic Pathways",
     role: "Program Manager / Sales Representative",
     dates: "Jun 2013 – Aug 2016",
@@ -101,14 +113,15 @@ const timelineData: TimelineEntry[] = [
       "When I finished my first degree at Ohio State in Film, I needed to squeeze more out of life. I went to NOLS in Patagonia for mountaineering immediately after graduating, and from there found Rustic Pathways — arguably the coolest job a 22-year-old could ask for. Three months in the Dominican Republic, bringing communities running water for the first time. Back for a second summer. Then Australia, then Peru. It taught me logistics, budget, communication, and project management in the most remote and challenging corners of the world.",
   },
   {
-    id: 7,
+    id: 8,
     type: "education",
-    organization: "The Ohio State University",
-    role: "B.A. Film",
+    organization: "Ohio State University",
+    role: "BA - Film Studies with an Emphasis in Independent Production",
     dates: "2009 – 2013",
     location: "Columbus, OH",
-    description: "Undergraduate degree in Film.",
-    context: "PLACEHOLDER — Desmond to write",
+    description:
+      "Straight out of high school, I went to OSU. At the time, I focused on what I knew and loved, which was the technicality of editing and cinematography. I knew it would not be my career, but at 19, I wasn't sure where I wanted to take my career. My interest was always technical and less artistic, and it was the foundation for my experiences at Rustic Pathways. It led me to a decade of travel and work that defined my youth and informed my worldview. It is why I now see engineering as the agency for me to effect change, and while my first degree appears antithetical to a technical field, I can draw the linkage directly to my success in school and my passion for technology.",
+    context: null,
   },
 ]
 
@@ -121,6 +134,7 @@ const NODE_POS = [
   { x: 95, y: 490 },
   { x: 95, y: 600 },
   { x: 95, y: 710 },
+  { x: 95, y: 820 },
 ]
 
 const TRACES = [
@@ -130,6 +144,7 @@ const TRACES = [
   { d: "M 95 380 L 95 490", len: 110 },
   { d: "M 95 490 L 95 600", len: 110 },
   { d: "M 95 600 L 95 710", len: 110 },
+  { d: "M 95 710 L 95 820", len: 110 },
 ]
 
 const NODE_SHORT = [
@@ -138,6 +153,7 @@ const NODE_SHORT = [
   "RH",
   "Benicia Cabinetry",
   "Caliber Academy",
+  "Helix Electric",
   "Rustic Pathways",
   "Ohio State",
 ]
@@ -195,7 +211,7 @@ export default function Timeline() {
         }}
       >
         <svg
-          viewBox="0 0 280 760"
+          viewBox="0 0 280 870"
           width="100%"
           height="100%"
           style={{ display: "block", overflow: "visible" }}

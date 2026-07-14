@@ -137,12 +137,21 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
             padding: "20px 22px",
           }}
         >
-          Second Bachelor&apos;s Electrical Engineering graduate with hands-on
-          experience in IC design, embedded systems, and autonomous hardware
-          development, including a fiber-optic-tethered drone platform with
-          onboard AI inference and MAVLink telemetry. Proficient in Cadence
-          Virtuoso, SystemVerilog, Python, MATLAB, and circuit prototyping,
-          with a project engineering background.
+          Welcome! My name is Desmond, and here I&apos;ll be displaying my
+          career journey, my portfolio, and my related content. I am a
+          recent graduate of UCI, receiving my second bachelor&apos;s degree
+          in electrical engineering with a specialization in semiconductors
+          and optoelectronics. My coursework has given me experience in IC
+          design, embedded systems, and hardware development. I am
+          proficient in Cadence Virtuoso, SystemVerilog, Python, MATLAB, and
+          circuit prototyping, with a project engineering background.
+          <br />
+          <br />
+          I am proud to say our senior capstone project, &lsquo;Photon
+          Flight&rsquo;, was a Dean&apos;s Award winning fiber-optically
+          controlled autonomous drone with onboard AI inference and
+          autonomous flight capabilities. Please enjoy and reach out with
+          any inquiries.
         </motion.p>
 
         {/* CLI terminal prompt */}
