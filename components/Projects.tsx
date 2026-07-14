@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import { WavesMirror } from "./WavesMirror"
 
 interface Project {
   id: number
@@ -354,7 +355,6 @@ export default function Projects() {
       ref={sectionRef}
       id="projects"
       style={{
-        background:    "#0a0a0a",
         height:        "100vh",
         display:       "flex",
         flexDirection: "column",
@@ -362,6 +362,8 @@ export default function Projects() {
         position:      "relative",
       }}
     >
+      <WavesMirror />
+
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{ padding: "2.5rem clamp(2rem, 6vw, 6rem) 1.25rem", flexShrink: 0 }}>
         <h2
@@ -406,6 +408,11 @@ export default function Projects() {
             flexDirection: "column",
             justifyContent: "center",
             gap:           "clamp(0.3rem, 1.2vh, 0.9rem)",
+            background:    "rgba(10,10,10,0.92)",
+            backdropFilter: "blur(8px)",
+            border:        "1px solid rgba(192,132,252,0.15)",
+            borderRadius:  "10px",
+            padding:       "20px 16px",
           }}
         >
           {projectsData.map((p, i) => {
@@ -491,6 +498,11 @@ export default function Projects() {
                 display:       "flex",
                 flexDirection: "column",
                 gap:           "0.9rem",
+                background:    "rgba(10,10,10,0.92)",
+                backdropFilter: "blur(8px)",
+                border:        "1px solid rgba(192,132,252,0.15)",
+                borderRadius:  "10px",
+                padding:       "20px",
               }}
             >
               {/* Counter + title */}

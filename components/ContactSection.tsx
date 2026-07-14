@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { BGPattern } from "./BGPattern"
+import { WavesMirror } from "./WavesMirror"
 
 const MONO: React.CSSProperties = {
   fontFamily: "var(--font-mono), monospace",
@@ -36,7 +37,6 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
       style={{
         position: "relative",
         minHeight: "100dvh",
-        background: "#0a0a0a",
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
@@ -48,6 +48,8 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
         fill="rgba(236,72,153,0.09)"
         size={28}
       />
+
+      <WavesMirror />
 
       <div
         style={{
@@ -75,12 +77,11 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
               color:          "#e8e8e8",
               lineHeight:     1,
               textTransform:  "uppercase",
-              background:     "rgba(255,255,255,0.03)",
-              border:         "1px solid rgba(255,255,255,0.07)",
-              borderLeft:     "3px solid #EC4899",
-              borderRadius:   "0 4px 4px 0",
-              padding:        "0.6rem 1.4rem 0.6rem 1.2rem",
-              backdropFilter: "blur(12px)",
+              background:     "rgba(10,10,10,0.92)",
+              border:         "1px solid rgba(236,72,153,0.15)",
+              borderRadius:   "10px",
+              padding:        "0.7rem 1.4rem",
+              backdropFilter: "blur(8px)",
               margin:         0,
             }}
           >
@@ -88,7 +89,19 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
           </h2>
         </motion.div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div
+          style={{
+            display:        "flex",
+            flexDirection:  "column",
+            gap:            "1.25rem",
+            width:          "fit-content",
+            background:     "rgba(10,10,10,0.92)",
+            backdropFilter: "blur(8px)",
+            border:         "1px solid rgba(236,72,153,0.15)",
+            borderRadius:   "10px",
+            padding:        "20px 24px",
+          }}
+        >
           <ContactLink
             href="https://github.com/desmondbolia"
             label="GitHub"

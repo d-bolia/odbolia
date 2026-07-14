@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { BGPattern } from "./BGPattern"
+import { WavesMirror } from "./WavesMirror"
 
 const MONO: React.CSSProperties = {
   fontFamily: "var(--font-mono), monospace",
@@ -62,7 +63,6 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
       style={{
         position: "relative",
         minHeight: "100dvh",
-        background: "#0a0a0a",
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
@@ -74,6 +74,8 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
         fill="rgba(107,33,168,0.12)"
         size={28}
       />
+
+      <WavesMirror />
 
       <div
         style={{
@@ -128,6 +130,11 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
             lineHeight: 1.65,
             maxWidth: 720,
             marginBottom: "5rem",
+            background: "rgba(10,10,10,0.92)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(6,182,212,0.15)",
+            borderRadius: "10px",
+            padding: "20px 22px",
           }}
         >
           Second Bachelor&apos;s Electrical Engineering graduate with hands-on
@@ -149,9 +156,14 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
             fontSize: "clamp(0.75rem, 1.1vw, 0.88rem)",
             letterSpacing: "0.08em",
             color: "rgba(232,232,232,0.45)",
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
             gap: 0,
+            background: "rgba(10,10,10,0.92)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(6,182,212,0.15)",
+            borderRadius: "10px",
+            padding: "12px 18px",
           }}
           onClick={() => inputRef.current?.focus()}
         >

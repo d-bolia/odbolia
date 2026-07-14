@@ -44,6 +44,13 @@ const S3       = 1
 // Outer sticky div: plain div — no transforms, so position:sticky works reliably.
 // Inner motion.div: carries the scroll-driven scale. Keeps transforms off the
 // sticky element to avoid browser quirks with sticky + transform interaction.
+// Opaque background restored: adjacent sticky panels overlap on-screen for
+// nearly their whole scroll range (each is exactly one viewport tall), so
+// this is what makes the incoming panel visually cover the outgoing one
+// during that overlap — required for the scroll-stacking transition.
+// Waves visibility inside a section is handled separately by a local
+// <WavesMirror> mounted inside that section's own content, not by punching
+// a hole in this wrapper.
 const OUTER: React.CSSProperties = {
   position: "sticky",
   top:      0,
@@ -186,11 +193,14 @@ export default function Home() {
       </div>
 
       {/* ── Global Waves background ───────────────────────────────────────── */}
+      {/* zIndex 0: below every section wrapper (1-4) so sections' own content
+          cards paint above it; section roots below are now transparent so
+          Waves shows through in the gutters around content. */}
       <div
         style={{
           position:      "fixed",
           inset:         0,
-          zIndex:        5,
+          zIndex:        0,
           pointerEvents: "none",
           opacity:       pastHero ? 0.35 : 0,
           transition:    "opacity 0.6s ease",
