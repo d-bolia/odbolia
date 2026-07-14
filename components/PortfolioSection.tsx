@@ -215,23 +215,34 @@ export default function PortfolioSection({ onOpenBranch, sectionRef }: Portfolio
           margin: "0 auto",
         }}
       >
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            ...MONO,
-            fontWeight: 600,
-            fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)",
-            letterSpacing: "0.14em",
-            color: "#e8e8e8",
-            marginBottom: "3rem",
-            lineHeight: 1,
-          }}
+          style={{ marginBottom: "3rem", display: "inline-block" }}
         >
-          Selected Works
-        </motion.h2>
+          <h2
+            style={{
+              fontFamily:     "var(--font-display), var(--font-mono), sans-serif",
+              fontWeight:     700,
+              fontSize:       "clamp(1.4rem, 3.5vw, 2.8rem)",
+              letterSpacing:  "0.1em",
+              color:          "#e8e8e8",
+              lineHeight:     1,
+              textTransform:  "uppercase",
+              background:     "rgba(255,255,255,0.03)",
+              border:         "1px solid rgba(255,255,255,0.07)",
+              borderLeft:     "3px solid #84CC16",
+              borderRadius:   "0 4px 4px 0",
+              padding:        "0.6rem 1.4rem 0.6rem 1.2rem",
+              backdropFilter: "blur(12px)",
+              margin:         0,
+            }}
+          >
+            Selected Works
+          </h2>
+        </motion.div>
 
         <div
           style={{

@@ -25,7 +25,25 @@
       "Bash(git commit -m ':*)",
       "Bash(git push:*)",
       "Bash(git commit:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Read(//c/Users/desmo/OneDrive/Pictures/Vector Images/**)",
+      "PowerShell(ls \"C:\\\\Users\\\\desmo\\\\Desktop\\\\odbolia\" | Where-Object { !$_.PSIsContainer })",
+      "Bash(Start-Sleep -Seconds 4)",
+      "Bash(Get-Content \"C:\\\\Users\\\\desmo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-desmo-Desktop-odbolia\\\\a49dbf15-32bc-4ea0-a943-846af365cf76\\\\tasks\\\\bh0leaxpg.output\" -Tail 20)",
+      "Bash(git revert *)",
+      "Skill(run)",
+      "Bash(npm run *)",
+      "Bash(disown)",
+      "Bash(command -v chromium-cli)",
+      "Bash(command -v npx)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(npx --yes playwright install chromium --with-deps)",
+      "Bash(mkdir -p \"C:/Users/desmo/Desktop/odbolia/.scratch-shots\")",
+      "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(node .scratch-verify.mjs)",
+      "Bash(mkdir -p \"C:/Users/desmo/Desktop/odbolia/.scratch-shots2\")",
+      "Bash(node .scratch-verify2.mjs)",
+      "Bash(node .scratch-console.mjs)"
     ]
   }
 }
