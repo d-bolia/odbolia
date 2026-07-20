@@ -82,7 +82,7 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
           position: "relative",
           zIndex: 10,
           width: "100%",
-          padding: "6rem clamp(2rem, 8vw, 8rem)",
+          padding: "3.5rem clamp(2rem, 8vw, 8rem)",
           maxWidth: 1100,
           margin: "0 auto",
         }}
@@ -93,13 +93,13 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ marginBottom: "3rem", display: "inline-block" }}
+          style={{ marginBottom: "2rem", display: "inline-block" }}
         >
           <h2
             style={{
               fontFamily:     "var(--font-chakra), sans-serif",
               fontWeight:     500,
-              fontSize:       "clamp(1.4rem, 3.5vw, 2.8rem)",
+              fontSize:       "clamp(1.15rem, 2.8vw, 2.2rem)",
               letterSpacing:  "0.1em",
               color:          "#e8e8e8",
               lineHeight:     1,
@@ -125,11 +125,11 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
           style={{
             fontFamily: "var(--font-dmsans), sans-serif",
             fontWeight: 400,
-            fontSize: "clamp(1rem, 1.4vw, 1.0625rem)",
+            fontSize: "clamp(0.78rem, 1.1vw, 0.92rem)",
             color: "#e8e8e8",
-            lineHeight: 1.65,
+            lineHeight: 1.7,
             maxWidth: 720,
-            marginBottom: "5rem",
+            marginBottom: "2.5rem",
             background: "rgba(10,10,10,0.92)",
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(6,182,212,0.15)",
@@ -162,7 +162,7 @@ export default function AboutSection({ onOpenBranch, sectionRef, branchOpen }: A
           transition={{ duration: 0.6, delay: 0.35 }}
           style={{
             fontFamily: "var(--font-mono), monospace",
-            fontSize: "clamp(0.75rem, 1.1vw, 0.88rem)",
+            fontSize: "clamp(0.68rem, 0.95vw, 0.8rem)",
             letterSpacing: "0.08em",
             color: "rgba(232,232,232,0.45)",
             display: "inline-flex",

@@ -44,7 +44,13 @@
       "Bash(mkdir -p \"C:/Users/desmo/Desktop/odbolia/.scratch-shots2\")",
       "Bash(node .scratch-verify2.mjs)",
       "Bash(node .scratch-console.mjs)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(npm ls *)",
+      "Bash(node .scratch-measure-about.mjs)",
+      "Bash(taskkill //F //IM node.exe //FI \"WINDOWTITLE eq *\")",
+      "Bash(netstat -ano)",
+      "Bash(powershell -NoProfile -Command \"Stop-Process -Id 31500 -Force\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000)"
     ]
   }
 }
