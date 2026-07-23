@@ -12,6 +12,7 @@ interface Project {
   tags: string[]
   github: string | null
   images: string[]
+  captions?: string[]
 }
 
 const projectsData: Project[] = [
@@ -19,7 +20,7 @@ const projectsData: Project[] = [
     id: 1,
     title: "Photon Flight",
     description:
-      "Designed and integrated a fiber-optic-tethered autonomous quadcopter platform for operation in RF-denied and GPS-degraded environments, enabling resilient navigation and communication without wireless dependency. Developed MAVLink telemetry pipeline and onboard AI inference engine achieving 75% object detection accuracy during controlled flight demonstrations exceeding 20 minutes of sustained operation. Performed notch filter analysis of flight log data in MATLAB and ArduPilot to identify noise sources in the control loop; optimized PID gains improving closed-loop stability and dynamic response by ~12%. Executed hardware integration and 3D modeling in SolidWorks. Dean's Award Recipient.",
+      "Designed and integrated a fiber-optic-tethered autonomous quadcopter platform for operation in RF-denied and GPS-degraded environments, enabling resilient navigation and communication without wireless dependency. Developed MAVLink telemetry pipeline and onboard AI inference engine achieving 75% object detection accuracy during controlled flight demonstrations exceeding 20 minutes of sustained operation. Performed notch filter analysis of flight log data in MATLAB and ArduPilot to identify noise sources in the control loop; optimized PID gains improving closed-loop stability and dynamic response by ~12%. Executed hardware integration and 3D modeling in SolidWorks.",
     tags: ["MAVLink", "ArduPilot", "PID Control", "AI Inference", "SolidWorks", "MATLAB"],
     github: "https://github.com/mervinnguyen/photonflight_fiber_optic_d",
     images: ["/images/projects/photon-flight-hero.png"],
@@ -63,6 +64,8 @@ const projectsData: Project[] = [
       "/images/projects/vlsi-3inputnand.png",
       "/images/projects/vlsi-booleanchem.png",
       "/images/projects/vlsi-booleandrc.png",
+      "/images/projects/vlsi-booleansymbol.png",
+      "/images/projects/vlsi-booleantransient.png",
       "/images/projects/vlsi-xor.png",
       "/images/projects/vlsi-1bitadder-schem.png",
       "/images/projects/vlsi-4bitadder-schem.png",
@@ -71,6 +74,23 @@ const projectsData: Project[] = [
       "/images/projects/4bitadder.2.png",
       "/images/projects/4bitadder.3.png",
       "/images/projects/4bitadder.4.png",
+    ],
+    captions: [
+      "Two-Input NOR Gate Schematic (Body Bias)",
+      "Two-Input NAND Gate Schematic (Body Bias)",
+      "Three-Input NAND Gate Schematic (Body Bias)",
+      "Six-Input Logic Schematic | G = !((A + B + C) · D · (E + F))",
+      "DRC Verification for Six-Input Boolean Logic",
+      "Six-Input Boolean Symbol",
+      "Six-Input Boolean Transient Analysis",
+      "Two-Input XOR Schematic",
+      "One-Bit Adder Symbol",
+      "4-Bit Ripple Carry Adder Symbol",
+      "JK-MS Flip Flop Symbol",
+      "4-Bit Ripple Carry Adder Verification (1)",
+      "4-Bit Ripple Carry Adder Verification (2)",
+      "4-Bit Ripple Carry Adder Verification (3)",
+      "4-Bit Ripple Carry Adder Verification (4)",
     ],
   },
   {
@@ -538,9 +558,17 @@ export default function Projects() {
                 </h3>
               </div>
 
-              {/* Dean's Award link — Photon Flight only */}
+              {/* Dean's Award / Project Repository links — Photon Flight only */}
               {project.id === 1 && (
-                <div style={{ flexShrink: 0, marginTop: "-0.3rem" }}>
+                <div
+                  style={{
+                    flexShrink: 0,
+                    marginTop:  "-0.3rem",
+                    display:    "flex",
+                    alignItems: "baseline",
+                    gap:        "0.5rem",
+                  }}
+                >
                   <a
                     href="https://engineering.uci.edu/news/2026/3/eleven-senior-projects-win-deans-choice-awards-2026-annual-design-review"
                     target="_blank"
@@ -556,6 +584,31 @@ export default function Projects() {
                     }}
                   >
                     Dean&apos;s Award Recipient
+                  </a>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono), monospace",
+                      fontSize:   "0.68rem",
+                      color:      "rgba(244,114,182,0.35)",
+                    }}
+                  >
+                    |
+                  </span>
+                  <a
+                    href="https://github.com/mervinnguyen/photonflight-fiber-optic-drone"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontFamily:     "var(--font-mono), monospace",
+                      fontSize:       "0.68rem",
+                      letterSpacing:  "0.08em",
+                      color:          "#f472b6",
+                      textDecoration: "none",
+                      borderBottom:   "1px solid rgba(244,114,182,0.35)",
+                      paddingBottom:  "1px",
+                    }}
+                  >
+                    Project Repository
                   </a>
                 </div>
               )}
@@ -590,6 +643,24 @@ export default function Projects() {
                         style={{ objectFit: "contain" }}
                         sizes="(max-width: 768px) 100vw, 65vw"
                       />
+                      {project.captions?.[imageIdx] && (
+                        <div
+                          style={{
+                            position:      "absolute",
+                            bottom:        0,
+                            left:          0,
+                            right:         0,
+                            background:    "linear-gradient(to top, rgba(10,10,10,0.85), transparent)",
+                            padding:       "0.5rem 0.8rem",
+                            fontFamily:    "var(--font-mono), monospace",
+                            fontSize:      "0.7rem",
+                            letterSpacing: "0.04em",
+                            color:         "#e8e8e8",
+                          }}
+                        >
+                          {project.captions[imageIdx]}
+                        </div>
+                      )}
                     </motion.div>
                   </AnimatePresence>
 
