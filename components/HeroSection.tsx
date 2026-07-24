@@ -110,10 +110,10 @@ export default function HeroSection({ pastHero = false }: HeroSectionProps) {
           zIndex:      10,
         }}
       >
-        <NavLink href="https://github.com/desmondbolia" label="GitHub">
+        <NavLink href="https://github.com/d-bolia" label="GitHub">
           <GitHubIcon />
         </NavLink>
-        <NavLink href="https://linkedin.com/in/desmondbolia" label="LinkedIn">
+        <NavLink href="https://www.linkedin.com/in/desmond-bolia" label="LinkedIn">
           <LinkedInIcon />
         </NavLink>
       </motion.nav>

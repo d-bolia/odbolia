@@ -103,16 +103,16 @@ export default function ContactSection({ sectionRef }: ContactSectionProps) {
           }}
         >
           <ContactLink
-            href="https://github.com/desmondbolia"
+            href="https://github.com/d-bolia"
             label="GitHub"
-            handle="github.com/desmondbolia"
+            handle="github.com/d-bolia"
             icon={<GitHubIcon />}
             delay={0.15}
           />
           <ContactLink
-            href="https://linkedin.com/in/desmondbolia"
+            href="https://www.linkedin.com/in/desmond-bolia"
             label="LinkedIn"
-            handle="linkedin.com/in/desmondbolia"
+            handle="linkedin.com/in/desmond-bolia"
             icon={<LinkedInIcon />}
             delay={0.25}
           />
