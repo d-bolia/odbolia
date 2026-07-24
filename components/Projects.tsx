@@ -102,32 +102,32 @@ const projectsData: Project[] = [
     tags: ["MATLAB", "Simulink", "Signal Processing", "Data Analysis", "Modeling", "Simulation"],
     github: null,
     images: [
+      "__CODE_SLIDE__",
+      "/images/projects/HW5_q3_fig.png",
+      "__CODE_SLIDE__",
+      "/images/projects/HW5_q2_fig.png",
       "/images/projects/matlab-acRC-sig.png",
       "/images/projects/matlab-acRC-scope.png",
       "/images/projects/matlab-delta-sig.png",
       "/images/projects/matlab-delta-scope.png",
       "/images/projects/matlab-yconfig-sig.png",
       "/images/projects/matlab-yconfig-scope.png",
-      "__CODE_SLIDE__",
-      "/images/projects/HW5_q3_fig.png",
-      "__CODE_SLIDE__",
-      "/images/projects/HW5_q2_fig.png",
     ],
     captions: [
+      "MATLAB Script to Model Frequency Response, Gain, Phase Response and Group Delay",
+      "Output of Frequency Response, Gain, Phase Response and Group Delay",
+      "MATLAB Script to Plot Magnitude Response, Unwrapped Phase Response, and Group Delay",
+      "Output of Magnitude Response, Unwrapped Phase Response, and Group Delay",
       "MATLAB Simulink Modeling Resistive Capacitive (RC) AC Electric Circuit Measuring Instantaneous, Average, Reactive, Apparent Power and Power Factor",
       "P-I-V Scope Measurements for RC Model",
       "MATLAB Simulink Modeling 3-Phase Y Configured RLC Circuit",
       "I-V Scope Measurements per Phase (Y)",
       "MATLAB Simulink 3-Phase Delta RLC Electric Circuit Modeling Instantaneous, Average, Apparent Power",
       "I-V Scope Measurements per Phase (Delta)",
-      "MATLAB Script to Model Frequency Response, Gain, Phase Response and Group Delay",
-      "Output of Frequency Response, Gain, Phase Response and Group Delay",
-      "MATLAB Script to Plot Magnitude Response, Unwrapped Phase Response, and Group Delay",
-      "Output of Magnitude Response, Unwrapped Phase Response, and Group Delay",
     ],
     codeSnippets: [
       {
-        atIndex: 6,
+        atIndex: 0,
         code: `% MATLAB Code for Problem 3 and 4: Plot Gain, Phase, and Group Delay for Different r and θ
 
 % Parameters
@@ -219,7 +219,7 @@ subplot(3, 3, 5); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'Unifor
 subplot(3, 3, 6); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'UniformOutput', false), 'Location', 'Best');`,
       },
       {
-        atIndex: 8,
+        atIndex: 2,
         code: `%|H(Ω)|, Gain, Unwrapped Phase, and Group Delay
 % Parameters
 K = 3/8; % Given K for maximum |H(Ω)| of 1
