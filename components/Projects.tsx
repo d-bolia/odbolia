@@ -13,6 +13,7 @@ interface Project {
   github: string | null
   images: string[]
   captions?: string[]
+  codeSnippets?: { atIndex: number; code: string }[]
 }
 
 const projectsData: Project[] = [
@@ -107,6 +108,175 @@ const projectsData: Project[] = [
       "/images/projects/matlab-delta-scope.png",
       "/images/projects/matlab-yconfig-sig.png",
       "/images/projects/matlab-yconfig-scope.png",
+      "__CODE_SLIDE__",
+      "/images/projects/HW5_q3_fig.png",
+      "__CODE_SLIDE__",
+      "/images/projects/HW5_q2_fig.png",
+    ],
+    captions: [
+      "MATLAB Simulink Modeling Resistive Capacitive (RC) AC Electric Circuit Measuring Instantaneous, Average, Reactive, Apparent Power and Power Factor",
+      "P-I-V Scope Measurements for RC Model",
+      "MATLAB Simulink Modeling 3-Phase Y Configured RLC Circuit",
+      "I-V Scope Measurements per Phase (Y)",
+      "MATLAB Simulink 3-Phase Delta RLC Electric Circuit Modeling Instantaneous, Average, Apparent Power",
+      "I-V Scope Measurements per Phase (Delta)",
+      "MATLAB Script to Model Frequency Response, Gain, Phase Response and Group Delay",
+      "Output of Frequency Response, Gain, Phase Response and Group Delay",
+      "MATLAB Script to Plot Magnitude Response, Unwrapped Phase Response, and Group Delay",
+      "Output of Magnitude Response, Unwrapped Phase Response, and Group Delay",
+    ],
+    codeSnippets: [
+      {
+        atIndex: 6,
+        code: `% MATLAB Code for Problem 3 and 4: Plot Gain, Phase, and Group Delay for Different r and θ
+
+% Parameters
+r_values = [0.3, 0.6, 0.9]; % Values of r
+Omega = linspace(-pi, pi, 1000); % Frequency range
+theta_pi = pi; % θ = π
+theta_pi2 = pi / 2; % θ = π/2
+
+% Function for frequency response
+H = @(r, theta, Omega) 1 - r * exp(1j * theta) * exp(-1j * Omega);
+
+% Plot for θ = π
+figure;
+for i = 1:length(r_values)
+    r = r_values(i);
+
+    % Compute frequency response for θ = π
+    H_pi = H(r, theta_pi, Omega);
+    gain_dB_pi = 20 * log10(abs(H_pi)); % Gain in dB
+    phase_pi = angle(H_pi); % Phase response
+    group_delay_pi = -diff(unwrap(phase_pi)) ./ diff(Omega); % Group delay
+
+    % Plot gain in dB
+    subplot(3, 3, 1); hold on;
+    plot(Omega, gain_dB_pi, 'LineWidth', 1.5);
+    xlabel('\\Omega (rad/sample)');
+    ylabel('Gain (dB)');
+    title('Gain in dB (\\theta = \\pi)');
+    grid on;
+
+    % Plot phase response
+    subplot(3, 3, 2); hold on;
+    plot(Omega, unwrap(phase_pi), 'LineWidth', 1.5);
+    xlabel('\\Omega (rad/sample)');
+    ylabel('Phase (rad)');
+    title('Phase Response (\\theta = \\pi)');
+    grid on;
+
+    % Plot group delay
+    subplot(3, 3, 3); hold on;
+    plot(Omega(1:end-1), group_delay_pi, 'LineWidth', 1.5);
+    xlabel('\\Omega (rad/sample)');
+    ylabel('Group Delay (samples)');
+    title('Group Delay (\\theta = \\pi)');
+    grid on;
+end
+
+% Plot for θ = π/2
+for i = 1:length(r_values)
+    r = r_values(i);
+
+    % Compute frequency response for θ = π/2
+    H_pi2 = H(r, theta_pi2, Omega);
+    gain_dB_pi2 = 20 * log10(abs(H_pi2)); % Gain in dB
+    phase_pi2 = angle(H_pi2); % Phase response
+    group_delay_pi2 = -diff(unwrap(phase_pi2)) ./ diff(Omega); % Group delay
+
+    % Plot gain in dB
+    subplot(3, 3, 4); hold on;
+    plot(Omega, gain_dB_pi2, 'LineWidth', 1.5);
+    xlabel('\\Omega (rad/sample)');
+    ylabel('Gain (dB)');
+    title('Gain in dB (\\theta = \\pi/2)');
+    grid on;
+
+    % Plot phase response
+    subplot(3, 3, 5); hold on;
+    plot(Omega, unwrap(phase_pi2), 'LineWidth', 1.5);
+    xlabel('\\Omega (rad/sample)');
+    ylabel('Phase (rad)');
+    title('Phase Response (\\theta = \\pi/2)');
+    grid on;
+
+    % Plot group delay
+    subplot(3, 3, 6); hold on;
+    plot(Omega(1:end-1), group_delay_pi2, 'LineWidth', 1.5);
+    xlabel('\\Omega (rad/sample)');
+    ylabel('Group Delay (samples)');
+    title('Group Delay (\\theta = \\pi/2)');
+    grid on;
+end
+
+% Legends for plots
+subplot(3, 3, 1); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'UniformOutput', false), 'Location', 'Best');
+subplot(3, 3, 2); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'UniformOutput', false), 'Location', 'Best');
+subplot(3, 3, 3); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'UniformOutput', false), 'Location', 'Best');
+subplot(3, 3, 4); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'UniformOutput', false), 'Location', 'Best');
+subplot(3, 3, 5); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'UniformOutput', false), 'Location', 'Best');
+subplot(3, 3, 6); legend(arrayfun(@(r) sprintf('r = %.1f', r), r_values, 'UniformOutput', false), 'Location', 'Best');`,
+      },
+      {
+        atIndex: 8,
+        code: `%|H(Ω)|, Gain, Unwrapped Phase, and Group Delay
+% Parameters
+K = 3/8; % Given K for maximum |H(Ω)| of 1
+Omega = linspace(-pi, pi, 1000); % Frequency range
+% Transfer function H(z) coefficients
+num = K * [1, 0, -1]; % Numerator coefficients for H(z)
+den = [1, 0, -0.25]; % Denominator coefficients for H(z)
+% Frequency response of the system
+[H, w] = freqz(num, den, Omega, 'whole'); % Compute frequency response
+% Part h: Magnitude response |H(Ω)|
+H_magnitude = abs(H);
+% Part i: Gain in dB
+gain_dB = 20 * log10(H_magnitude);
+% Part k: Unwrapped phase response
+unwrapped_phase = unwrap(angle(H));
+% Part m: Group delay
+[gd, w] = grpdelay(num, den, Omega, 'whole');
+% Plot all graphs in the same figure
+figure;
+% Plot magnitude response |H(Ω)|
+subplot(4, 1, 1);
+plot(w - pi, H_magnitude, 'b', 'LineWidth', 1.5); % Shift w from [0, 2π] to [-π, π]
+xlabel('\\Omega (rad/sample)', 'FontSize', 12);
+ylabel('|H(\\Omega)|', 'FontSize', 12);
+title('Magnitude Response |H(\\Omega)|', 'FontSize', 14);
+grid on;
+xlim([-pi pi]);
+ylim([0 1.1]);
+set(gca, 'FontSize', 12);
+% Plot gain in dB
+subplot(4, 1, 2);
+plot(w - pi, gain_dB, 'r', 'LineWidth', 1.5);
+xlabel('\\Omega (rad/sample)', 'FontSize', 12);
+ylabel('Gain (dB)', 'FontSize', 12);
+title('Gain in dB', 'FontSize', 14);
+grid on;
+xlim([-pi pi]);
+set(gca, 'FontSize', 12);
+% Plot unwrapped phase response
+subplot(4, 1, 3);
+plot(w - pi, unwrapped_phase, 'g', 'LineWidth', 1.5);
+xlabel('\\Omega (rad/sample)', 'FontSize', 12);
+ylabel('Phase (rad)', 'FontSize', 12);
+title('Unwrapped Phase Response', 'FontSize', 14);
+grid on;
+xlim([-pi pi]);
+set(gca, 'FontSize', 12);
+% Plot group delay
+subplot(4, 1, 4);
+plot(w - pi, gd, 'm', 'LineWidth', 1.5);
+xlabel('\\Omega (rad/sample)', 'FontSize', 12);
+ylabel('Group Delay (samples)', 'FontSize', 12);
+title('Group Delay', 'FontSize', 14);
+grid on;
+xlim([-pi pi]);
+set(gca, 'FontSize', 12);`,
+      },
     ],
   },
 ]
@@ -316,6 +486,84 @@ function ArrowBtn({
   )
 }
 
+// ── Code viewer slide ──────────────────────────────────────────────────────────
+
+const CODE_SCROLL_SPEED = 18 // px/sec
+
+function CodeSlide({ code }: { code: string }) {
+  const [hovered, setHovered] = useState(false)
+  const trackRef     = useRef<HTMLDivElement>(null)
+  const firstCopyRef = useRef<HTMLDivElement>(null)
+  const [copyHeight, setCopyHeight] = useState(0)
+  const yRef        = useRef(0)
+  const rafRef      = useRef<number | undefined>(undefined)
+  const lastTimeRef = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    if (firstCopyRef.current) {
+      setCopyHeight(firstCopyRef.current.getBoundingClientRect().height)
+    }
+  }, [code])
+
+  useEffect(() => {
+    const step = (time: number) => {
+      if (lastTimeRef.current == null) lastTimeRef.current = time
+      const dt = (time - lastTimeRef.current) / 1000
+      lastTimeRef.current = time
+
+      if (!hovered && copyHeight > 0) {
+        yRef.current -= CODE_SCROLL_SPEED * dt
+        if (yRef.current <= -copyHeight) yRef.current += copyHeight
+        if (trackRef.current) {
+          trackRef.current.style.transform = `translateY(${yRef.current}px)`
+        }
+      }
+      rafRef.current = requestAnimationFrame(step)
+    }
+    rafRef.current = requestAnimationFrame(step)
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      lastTimeRef.current = undefined
+    }
+  }, [hovered, copyHeight])
+
+  const lines = code.split("\n")
+
+  const renderLines = (keyPrefix: string) =>
+    lines.map((line, i) => (
+      <div
+        key={`${keyPrefix}-${i}`}
+        style={{
+          whiteSpace: "pre",
+          color:      line.trim().startsWith("%") ? "#4ade80" : "#e8e8e8",
+        }}
+      >
+        {line.length === 0 ? " " : line}
+      </div>
+    ))
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:   "absolute",
+        inset:      0,
+        overflow:   "hidden",
+        padding:    "1rem",
+        fontFamily: "var(--font-mono), monospace",
+        fontSize:   "0.7rem",
+        lineHeight: 1.5,
+      }}
+    >
+      <div ref={trackRef} style={{ willChange: "transform" }}>
+        <div ref={firstCopyRef}>{renderLines("a")}</div>
+        <div>{renderLines("b")}</div>
+      </div>
+    </div>
+  )
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function Projects() {
@@ -362,6 +610,7 @@ export default function Projects() {
   }, [])
 
   const project = projectsData[activeIdx]
+  const activeCodeSlide = project.codeSnippets?.find((cs) => cs.atIndex === imageIdx)
 
   const changeProject = (i: number) => {
     if (i === activeIdx) return
@@ -636,13 +885,17 @@ export default function Projects() {
                       transition={{ duration: 0.2 }}
                       style={{ position: "absolute", inset: 0 }}
                     >
-                      <Image
-                        src={project.images[imageIdx]}
-                        alt={`${project.title} ${imageIdx + 1}`}
-                        fill
-                        style={{ objectFit: "contain" }}
-                        sizes="(max-width: 768px) 100vw, 65vw"
-                      />
+                      {activeCodeSlide ? (
+                        <CodeSlide code={activeCodeSlide.code} />
+                      ) : (
+                        <Image
+                          src={project.images[imageIdx]}
+                          alt={`${project.title} ${imageIdx + 1}`}
+                          fill
+                          style={{ objectFit: "contain" }}
+                          sizes="(max-width: 768px) 100vw, 65vw"
+                        />
+                      )}
                       {project.captions?.[imageIdx] && (
                         <div
                           style={{
